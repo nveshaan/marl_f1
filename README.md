@@ -1,1 +1,1 @@
-# marl_f1
+# F1 Multi-Agent Reinforcement Learning
