@@ -4,10 +4,10 @@ import numpy as np
 import Box2D
 from Box2D.b2 import (edgeShape, circleShape, fixtureDef, polygonShape, revoluteJointDef, contactListener)
 
-import gym
-import gym.envs.box2d.car_dynamics as car_dynamics
-from gym import spaces
-from gym.utils import colorize, seeding, EzPickle
+import gymnasium as gym
+import gymnasium.envs.box2d.car_dynamics as car_dynamics
+from gymnasium import spaces
+from gymnasium.utils import colorize, seeding, EzPickle
 
 import pyglet
 from pyglet import gl
@@ -527,7 +527,7 @@ class MultiCarRacing(gym.Env, EzPickle):
         """
 
         if self.viewer[car_id] is None:
-            from gym.envs.classic_control import rendering
+            from gymnasium.envs.classic_control import rendering # FIXME: is rendering available in gymnasium?
             self.viewer[car_id] = rendering.Viewer(WINDOW_W, WINDOW_H)
             self.viewer[car_id].window.set_caption(f"Car {car_id}")
             self.score_label = pyglet.text.Label('0000', font_size=36,
@@ -713,8 +713,10 @@ if __name__=="__main__":
         viewer.window.on_key_release = key_release
     record_video = False
     if record_video:
-        from gym.wrappers.monitor import Monitor
-        env = Monitor(env, '/tmp/video-test', force=True)
+        # from gym.wrappers.monitor import Monitor
+        # env = Monitor(env, '/tmp/video-test', force=True)
+        from gymnasium.wrappers import RecordVideo
+        env = RecordVideo(env, '/tmp/video-test', episode_trigger=lambda x: True)
     isopen = True
     stopped = False
     while isopen and not stopped:
@@ -723,7 +725,9 @@ if __name__=="__main__":
         steps = 0
         restart = False
         while True:
-            s, r, done, info = env.step(a)
+            # s, r, done, info = env.step(a)
+            s, r, terminated, truncated, info = env.step(a)
+            done = terminated or truncated
             total_reward += r
             if steps % 200 == 0 or done:
                 print("\nActions: " + str.join(" ", [f"Car {x}: "+str(a[x]) for x in range(NUM_CARS)]))
