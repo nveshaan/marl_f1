@@ -1,5 +1,6 @@
+numpy
 gymnasium
 box2d
-pyglet
 shapely
 pygame
+ipykernel

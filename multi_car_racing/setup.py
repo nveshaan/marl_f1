@@ -11,5 +11,6 @@ setup(
         'shapely',
         'numpy',
         'gymnasium',
+        'pygame',
     ]
 )
