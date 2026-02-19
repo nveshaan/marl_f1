@@ -4,3 +4,6 @@ box2d
 shapely
 pygame
 ipykernel
+torch
+stable-baselines3
+opencv-python-headless
