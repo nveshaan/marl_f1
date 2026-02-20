@@ -6,4 +6,4 @@ pygame
 ipykernel
 torch
 stable-baselines3
-opencv-python-headless
+opencv-python
