@@ -1,11 +1,10 @@
 # F1 Multi-Agent Reinforcement Learning
 
+> This project uses `uv` as the package/environment manager. Install it from [here](https://docs.astral.sh/uv/getting-started/installation/).
+
 ## Setup
 ```bash
-conda create python=3.12 -p ./env
-conda activate ./env
-pip install -r requirements.txt
-
-cd multi_car_racing
-pip install -e .
+git clone --recurse-submodules https://github.com/nveshaan/marl_f1.git
+cd marl_f1
+uv sync
 ```

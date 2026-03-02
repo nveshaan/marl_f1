@@ -348,7 +348,7 @@ wheels = [
 
 [[package]]
 name = "gym-multi-car-racing"
-version = "0.0.2"
+version = "0.0.1"
 source = { editable = "multi_car_racing" }
 dependencies = [
     { name = "box2d" },
