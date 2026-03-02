@@ -1,0 +1,26 @@
+[project]
+name = "marl-f1"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "box2d>=2.3.10",
+    "gym-multi-car-racing",
+    "gymnasium>=1.2.3",
+    "ipykernel>=7.2.0",
+    "numpy>=2.4.2",
+    "opencv-python>=4.13.0.92",
+    "pygame>=2.6.1",
+    "shapely>=2.1.2",
+    "stable-baselines3>=2.7.1",
+    "torch>=2.10.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "multi_car_racing",
+]
+
+[tool.uv.sources]
+gym-multi-car-racing = { workspace = true, editable = true }

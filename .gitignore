@@ -1,3 +1,6 @@
-.*
-env
-models
+.venv/
+.vscode/
+.DS_Store
+
+models/
+1/

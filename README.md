@@ -2,7 +2,7 @@
 
 ## Setup
 ```bash
-conda create python=3.10 -p ./env
+conda create python=3.12 -p ./env
 conda activate ./env
 pip install -r requirements.txt
 
