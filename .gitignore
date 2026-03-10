@@ -2,5 +2,5 @@
 .vscode/
 .DS_Store
 
-models/
-1/
+experiments
+__pycache__

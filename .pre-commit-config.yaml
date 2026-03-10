@@ -1,0 +1,14 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.13.0
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+  - repo: local
+    hooks:
+      - id: update-readme-tree
+        name: Update README tree
+        entry: python utils/update_readme_tree.py
+        language: system
+        pass_filenames: false
