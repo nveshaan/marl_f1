@@ -3,13 +3,6 @@
 <!-- BEGIN:PROJECT_TREE -->
 ```text
 marl_f1/
-├── .ruff_cache/
-│   ├── 0.13.0/
-│   │   ├── 15844811170001472531
-│   │   ├── 17799575580624282278
-│   │   └── 5486805713395348790
-│   ├── .gitignore
-│   └── CACHEDIR.TAG
 ├── baselines/
 │   ├── __init__.py
 │   └── single_agent.py

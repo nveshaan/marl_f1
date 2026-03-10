@@ -1,6 +1,7 @@
 .venv/
 .vscode/
 .DS_Store
+.ruff_cache
 
 experiments
 __pycache__

@@ -10,7 +10,15 @@ BEGIN = "<!-- BEGIN:PROJECT_TREE -->"
 END = "<!-- END:PROJECT_TREE -->"
 
 # Keep this aligned with what you want visible in README.
-EXCLUDE_DIRS = {".git", ".venv", "__pycache__", "experiments", "notebooks", ".vscode"}
+EXCLUDE_DIRS = {
+    ".git",
+    ".venv",
+    "__pycache__",
+    "experiments",
+    "notebooks",
+    ".vscode",
+    ".ruff_cache",
+}
 EXCLUDE_SUFFIXES = {".pyc", ".log"}
 EXCLUDE_EXACT = {"uv.lock", ".DS_Store"}
 MAX_DEPTH = 3
