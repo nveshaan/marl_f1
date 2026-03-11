@@ -3,9 +3,17 @@
 <!-- BEGIN:PROJECT_TREE -->
 ```text
 marl_f1/
-├── baselines/
+├── agents/
+│   ├── baselines/
+│   │   ├── __init__.py
+│   │   ├── competitive_agent.py
+│   │   ├── cooperative_agent.py
+│   │   ├── mixed_agent.py
+│   │   └── single_agent.py
+│   ├── world_models/
+│   │   └── __init__.py
 │   ├── __init__.py
-│   └── single_agent.py
+│   └── base_agent.py
 ├── configs/
 │   └── single_agent.yml
 ├── models/
@@ -20,7 +28,7 @@ marl_f1/
 │   ├── pyproject.toml
 │   └── README.md
 ├── scripts/
-│   ├── evaluate.py
+│   ├── eval.py
 │   └── train.py
 ├── utils/
 │   └── update_readme_tree.py
@@ -63,6 +71,7 @@ uv sync --group dev
 uv run --group dev pre-commit install
 uv run --group dev pre-commit run --all-files
 ```
+Do note that if there is change in the directory structure (addition or removal of files/folders), `utils/update_readme_tree.py` will make `git commit` throw an error. Kindly ignore and `git commit -a README.md`. It is just a `pre-commit` script to update the directory tree in `README.md`
 
 ## Acknowledgements
 
