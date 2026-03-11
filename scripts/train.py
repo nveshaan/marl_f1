@@ -15,10 +15,10 @@ def main(cfg: DictConfig) -> None:
     run_dir = Path()
     tb_dir = run_dir / "tb"
     ckpt_dir = run_dir / "checkpoints"
-    # mntr_dir = run_dir / "monitor"
+    mntr_dir = run_dir / "monitor"
     tb_dir.mkdir(parents=True, exist_ok=True)
     ckpt_dir.mkdir(parents=True, exist_ok=True)
-    ckpt_dir.mkdir(parents=True, exist_ok=True)
+    mntr_dir.mkdir(parents=True, exist_ok=True)
 
     cls = hydra.utils.get_class(cfg._target_)
     agent: BaseAgent = cls(cfg)
