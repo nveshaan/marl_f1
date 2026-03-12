@@ -1,0 +1,22 @@
+name: dqn
+family: model_free
+_target_: stable_baselines3.DQN
+hyperparams:
+  seed: ${seed}
+  device: ${device}
+  policy: ${policy.policy}
+  policy_kwargs: ${policy.policy_kwargs}
+  learning_rate: 1e-4
+  buffer_size: 100000
+  batch_size: 32
+  exploration_initial_eps: 0.9
+  exploration_final_eps: 0.1
+  exploration_fraction: 0.8  
+  tensorboard_log: ${hydra:runtime.output_dir}/${paths.tb}
+  verbose: 1
+train:
+  total_timesteps: 100000
+
+env_kwargs:
+  continuous: false
+  use_random_direction: true

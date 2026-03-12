@@ -1,27 +1,37 @@
-import pathlib
 from pathlib import Path
 
 import hydra
-from omegaconf import DictConfig, OmegaConf
+import torch
+from hydra.core.hydra_config import HydraConfig
+from hydra.utils import instantiate
+from omegaconf import DictConfig, OmegaConf, open_dict
 
 from agents import BaseAgent
 
 OmegaConf.register_new_resolver("eval", eval, replace=True)
+OmegaConf.register_new_resolver(
+    "device",
+    lambda: "mps"
+    if torch.backends.mps.is_available()
+    else "cuda"
+    if torch.cuda.is_available()
+    else "cpu",
+    replace=True,
+)
 
 
-@hydra.main(version_base=None, config_path=str(pathlib.Path(__file__).parent.joinpath("configs")))
+@hydra.main(version_base=None, config_path="../configs", config_name="train")
 def main(cfg: DictConfig) -> None:
     OmegaConf.resolve(cfg)
-    run_dir = Path()
-    tb_dir = run_dir / "tb"
-    ckpt_dir = run_dir / "checkpoints"
-    mntr_dir = run_dir / "monitor"
-    tb_dir.mkdir(parents=True, exist_ok=True)
-    ckpt_dir.mkdir(parents=True, exist_ok=True)
-    mntr_dir.mkdir(parents=True, exist_ok=True)
 
-    cls = hydra.utils.get_class(cfg._target_)
-    agent: BaseAgent = cls(cfg)
+    run_dir = Path(HydraConfig.get().runtime.output_dir)
+    for path in cfg.paths.values():
+        (run_dir / path).mkdir(parents=True, exist_ok=True)
+
+    with open_dict(cfg):
+        cfg.run_dir = str(run_dir)
+
+    agent: BaseAgent = instantiate(cfg.style, cfg=cfg, _recursive_=False)
     agent.learn()
 
 

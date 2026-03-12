@@ -1,0 +1,4 @@
+name: racing
+id: CarRacing-v3
+action_space: discrete
+observation: rgb

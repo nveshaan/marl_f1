@@ -6,6 +6,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 README = ROOT / "README.md"
 
+CONFIGS_DIR = ROOT / "configs"
+MCR_DIR = ROOT / "multi_car_racing"
+
 BEGIN = "<!-- BEGIN:PROJECT_TREE -->"
 END = "<!-- END:PROJECT_TREE -->"
 
@@ -19,8 +22,8 @@ EXCLUDE_DIRS = {
     ".vscode",
     ".ruff_cache",
 }
-EXCLUDE_SUFFIXES = {".pyc", ".log"}
-EXCLUDE_EXACT = {"uv.lock", ".DS_Store"}
+EXCLUDE_SUFFIXES = {".pyc", ".log", ".yaml"}
+EXCLUDE_EXACT = {"uv.lock", ".DS_Store", ".python-version", "update_readme_tree.py", "__init__.py"}
 MAX_DEPTH = 3
 
 
@@ -31,6 +34,14 @@ def visible(path: Path) -> bool:
         return False
     if path.suffix in EXCLUDE_SUFFIXES:
         return False
+
+    # Keep `configs/` itself, hide everything inside it.
+    if path != CONFIGS_DIR and path.is_relative_to(CONFIGS_DIR):
+        return False
+
+    if path != MCR_DIR and path.is_relative_to(MCR_DIR):
+        return False
+
     return not path.name.endswith(".egg-info")
 
 

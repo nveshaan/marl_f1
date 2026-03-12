@@ -4,38 +4,19 @@
 ```text
 marl_f1/
 ├── agents/
-│   ├── baselines/
-│   │   ├── __init__.py
-│   │   ├── competitive_agent.py
-│   │   ├── cooperative_agent.py
-│   │   ├── mixed_agent.py
-│   │   └── single_agent.py
-│   ├── world_models/
-│   │   └── __init__.py
-│   ├── __init__.py
-│   └── base_agent.py
+│   ├── base_agent.py
+│   ├── baseline_agent.py
+│   ├── dreamer_agent.py
+│   └── worldmodel_agent.py
 ├── configs/
-│   └── single_agent.yml
 ├── models/
 ├── multi_car_racing/
-│   ├── gym_multi_car_racing/
-│   │   ├── __init__.py
-│   │   └── multi_car_racing.py
-│   ├── .git
-│   ├── .gitignore
-│   ├── AUTHORS
-│   ├── LICENSE
-│   ├── pyproject.toml
-│   └── README.md
 ├── scripts/
 │   ├── eval.py
 │   └── train.py
 ├── utils/
-│   └── update_readme_tree.py
 ├── .gitignore
 ├── .gitmodules
-├── .pre-commit-config.yaml
-├── .python-version
 ├── LICENSE
 ├── pyproject.toml
 └── README.md
@@ -61,7 +42,7 @@ uv sync --group notebook
 
 ## Training
 ```bash
-python scripts/train.py CarRacing-v0
+python -m scripts.train
 ```
 
 ## Contributing

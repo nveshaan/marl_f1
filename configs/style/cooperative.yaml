@@ -1,0 +1,6 @@
+name: cooperative
+num_agents: 2
+shared_reward: true
+shared_policy: true
+multi_agent: true
+team_ids: [0, 0]

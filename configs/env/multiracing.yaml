@@ -1,0 +1,4 @@
+name: multiracing
+id: MultiCarRacing-v0
+action_space: continuous
+observation: multi_rgb

@@ -1,0 +1,14 @@
+name: sb3
+eval:
+  enabled: true
+  eval_freq: 10000
+  n_eval_episodes: 5
+  deterministic: true
+  best_model_subdir: best_model
+  log_subdir: eval_logs
+
+checkpoint:
+  enabled: true
+  save_freq: 25000
+  save_subdir: checkpoints
+  name_prefix: ${algo.name}

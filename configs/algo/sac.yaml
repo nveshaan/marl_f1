@@ -1,0 +1,20 @@
+name: sac
+family: model_free
+_target_: stable_baselines3.SAC
+hyperparams:
+  seed: ${seed}
+  device: ${device}
+  policy: ${policy.policy}
+  policy_kwargs: ${policy.policy_kwargs}
+  learning_rate: 3e-4
+  buffer_size: 100000
+  batch_size: 256
+  train_freq: 1
+  gradient_steps: 1
+  verbose: 1
+  tensorboard_log: ${hydra:runtime.output_dir}/${paths.tb}
+train:
+  total_timesteps: 100000
+env_kwargs:
+  continuous: true
+  use_random_direction: true

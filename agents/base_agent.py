@@ -1,15 +1,30 @@
-class BaseAgent:
-    def __init__(self):
-        pass
+from abc import ABC, abstractmethod
 
-    def learn(self):
+
+class BaseAgent(ABC):
+    def __init__(self, cfg):
+        self.cfg = cfg
+
+    @abstractmethod
+    def learn(self) -> None:
         raise NotImplementedError
 
-    def load(self):
+    @abstractmethod
+    def load(self, path: str) -> None:
         raise NotImplementedError
 
-    def save(self):
+    @abstractmethod
+    def save(self, path: str) -> None:
         raise NotImplementedError
 
+    @abstractmethod
+    def eval(self) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
     def get_model(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_env(self):
         raise NotImplementedError

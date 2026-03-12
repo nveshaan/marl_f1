@@ -1,0 +1,3 @@
+name: single
+_target_: agents.baseline_agent.BaselineAgent
+# FIXME: not intended behaviour

@@ -1,7 +1,0 @@
-algos:
-  - dqn
-  - ddpg
-  - a2c
-  - ppo
-  - sac
-  - td3
