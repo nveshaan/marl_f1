@@ -1,6 +1,0 @@
-name: racing
-id: CarRacing-v3
-action_space: discrete
-observation: rgb
-agent:
-  _target_: agents.baseline_agent.BaselineAgent

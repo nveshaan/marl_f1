@@ -1,7 +1,7 @@
 name: sac
 family: model_free
-_target_: stable_baselines3.SAC
-hyperparams:
+model:
+  _target_: stable_baselines3.SAC
   seed: ${seed}
   device: ${device}
   policy: ${policy.policy}
@@ -15,6 +15,5 @@ hyperparams:
   tensorboard_log: ${hydra:runtime.output_dir}/${paths.tb}
 train:
   total_timesteps: 100000
-env_kwargs:
-  continuous: true
-  use_random_direction: true
+agent:
+  _target_: agents.baseline_agent.BaselineAgent

@@ -31,7 +31,7 @@ def main(cfg: DictConfig) -> None:
     with open_dict(cfg):
         cfg.run_dir = str(run_dir)
 
-    agent: BaseAgent = instantiate(cfg.env.agent, cfg=cfg, _recursive_=False)
+    agent: BaseAgent = instantiate(cfg.algo.agent, cfg=cfg, _recursive_=False)
     agent.learn()
 
 

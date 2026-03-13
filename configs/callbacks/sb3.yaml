@@ -1,14 +1,19 @@
-name: sb3
-eval:
-  enabled: true
-  eval_freq: 10000
-  n_eval_episodes: 5
-  deterministic: true
-  best_model_subdir: best_model
-  log_subdir: eval_logs
+_target_: utils.sb3.build_callbacks
+eval_env: null
+cfg:
+  - enabled: true
+    params:
+      _target_: stable_baselines3.common.callbacks.EvalCallback
+      eval_env: ${eval_env}
+      eval_freq: 10000
+      n_eval_episodes: 5
+      deterministic: true
+      best_model_save_path: ${hydra:runtime.output_dir}/${paths.best_model}
+      log_path: ${hydra:runtime.output_dir}/${paths.eval_logs}
 
-checkpoint:
-  enabled: true
-  save_freq: 25000
-  save_subdir: checkpoints
-  name_prefix: ${algo.name}
+  - enabled: true
+    params:
+      _target_: stable_baselines3.common.callbacks.CheckpointCallback
+      save_freq: 25000
+      save_path: ${hydra:runtime.output_dir}/${paths.checkpoints}
+      name_prefix: ${algo.name}

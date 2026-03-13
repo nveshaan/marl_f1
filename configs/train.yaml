@@ -1,8 +1,7 @@
 defaults:
-  - env: racing
-  - algo: dqn
+  - env: single
+  - algo: sac
   - policy: cnn
-  - reward: default
   - wrappers: image_stack
   - callbacks: sb3
   - _self_
@@ -22,26 +21,32 @@ paths:
   eval_logs: eval_logs
 
 train_env:
-  _target_: stable_baselines3.common.env_util.make_vec_env
-  env_id: ${env.id}
-  n_envs: 4
-  seed: ${seed}
-  vec_env_cls:
-    _target_: hydra.utils.get_class
-    path: stable_baselines3.common.vec_env.DummyVecEnv
-  env_kwargs: ${algo.env_kwargs}
-  monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_train}
+  _target_: utils.sb3.build_env
+  env_cfg:
+    _target_: stable_baselines3.common.env_util.make_vec_env
+    env_id: ${env.id}
+    n_envs: 4
+    seed: ${seed}
+    vec_env_cls:
+      _target_: hydra.utils.get_class
+      path: stable_baselines3.common.vec_env.DummyVecEnv
+    env_kwargs: ${env.env_kwargs}
+    monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_train}
+  wrappers: ${wrappers.train.wrappers}
 
 eval_env:
-  _target_: stable_baselines3.common.env_util.make_vec_env
-  env_id: ${env.id}
-  n_envs: 1
-  seed: ${eval:'${seed} + 1000'}
-  vec_env_cls:
-    _target_: hydra.utils.get_class
-    path: stable_baselines3.common.vec_env.DummyVecEnv
-  env_kwargs: ${algo.env_kwargs}
-  monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_eval}
+  _target_: utils.sb3.build_env
+  env_cfg:
+    _target_: stable_baselines3.common.env_util.make_vec_env
+    env_id: ${env.id}
+    n_envs: 1
+    seed: ${eval:'${seed} + 1000'}
+    vec_env_cls:
+      _target_: hydra.utils.get_class
+      path: stable_baselines3.common.vec_env.DummyVecEnv
+    env_kwargs: ${env.env_kwargs}
+    monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_eval}
+  wrappers: ${wrappers.eval.wrappers}
 
 train:
   total_timesteps: ${algo.train.total_timesteps}

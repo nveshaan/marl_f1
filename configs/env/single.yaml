@@ -1,0 +1,4 @@
+name: single
+id: MultiCarRacing-v0
+env_kwargs:
+  num_agents: 1
