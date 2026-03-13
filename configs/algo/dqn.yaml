@@ -19,4 +19,4 @@ train:
 
 env_kwargs:
   continuous: false
-  use_random_direction: true
+  # use_random_direction: true

@@ -1,9 +1,10 @@
 from pathlib import Path
 
-from base_agent import BaseAgent
 from hydra.utils import get_class, instantiate
 from omegaconf import OmegaConf
 from stable_baselines3.common.callbacks import CallbackList
+
+from .base_agent import BaseAgent
 
 
 class BaselineAgent(BaseAgent):
