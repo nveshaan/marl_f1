@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parent.parent
 README = ROOT / "README.md"
 
 CONFIGS_DIR = ROOT / "configs"
+TRAIN_CONFIG = CONFIGS_DIR / "train.yaml"
 MCR_DIR = ROOT / "multi_car_racing"
 
 BEGIN = "<!-- BEGIN:PROJECT_TREE -->"
@@ -28,6 +29,9 @@ MAX_DEPTH = 3
 
 
 def visible(path: Path) -> bool:
+    if path == TRAIN_CONFIG:
+        return True
+
     if path.name in EXCLUDE_EXACT:
         return False
     if path.is_dir() and path.name in EXCLUDE_DIRS:
@@ -35,7 +39,7 @@ def visible(path: Path) -> bool:
     if path.suffix in EXCLUDE_SUFFIXES:
         return False
 
-    # Keep `configs/` itself, hide everything inside it.
+    # Keep `configs/` itself and `configs/train.yaml`, hide everything else inside it.
     if path != CONFIGS_DIR and path.is_relative_to(CONFIGS_DIR):
         return False
 

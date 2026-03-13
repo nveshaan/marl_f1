@@ -1,21 +1,23 @@
-name: sac
+name: dqn
 family: model_free
 model:
-  _target_: stable_baselines3.SAC
+  _target_: stable_baselines3.DQN
   seed: ${seed}
   device: ${device}
   policy: ${policy.policy}
   policy_kwargs: ${policy.policy_kwargs}
-  learning_rate: 3e-4
+  learning_rate: 1e-4
   buffer_size: 100000
-  batch_size: 256
-  train_freq: 1
-  gradient_steps: 1
-  verbose: 1
+  batch_size: 32
+  exploration_initial_eps: 0.9
+  exploration_final_eps: 0.1
+  exploration_fraction: 0.8  
   tensorboard_log: ${hydra:runtime.output_dir}/${paths.tb}
+  verbose: 1
 train:
   total_timesteps: 100000
 agent:
   _target_: agents.baseline_agent.BaselineAgent
 env_kwargs:
   num_agents: 1
+  continuous: false

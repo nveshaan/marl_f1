@@ -11,6 +11,7 @@ marl_f1/
 │   ├── dreamer_agent.py
 │   └── worldmodel_agent.py
 ├── configs/
+│   └── train.yaml
 ├── models/
 ├── multi_car_racing/
 ├── scripts/
@@ -47,16 +48,15 @@ uv sync --group notebook
 ## Training
 
 ```bash
-python -m scripts.train env=multiracing algo=dqn seed=7 train_env.n_envs=8 num_threads=4
+python -m scripts.train task=competitive algo=dqn seed=7 train_env.n_envs=8 num_threads=4
 ```
 
 | Argument    | Description                                                             | Default       | Available values        |
 | ----------- | ----------------------------------------------------------------------- | ------------- | ----------------------- |
-| `env`       | Environment config group used for training and evaluation env creation. | `racing`      | `racing`, `multiracing` |
+| `task`      | Experiment tag/profile used in naming.                                  | `single`      | ex. `competitive`       |
 | `algo`      | RL algorithm config, including model settings and training timesteps.   | `dqn`         | `dqn`, `sac`            |
-| `style`     | Agent style/head that is instantiated from `cfg.style`.                 | `single`      | `single`, `cooperative` |
 | `policy`    | Policy architecture/config used by the selected algorithm.              | `cnn`         | `cnn`                   |
-| `reward`    | Reward configuration group passed into env/algo settings.               | `default`     | `default`               |
+<!-- | `reward`    | Reward configuration group passed into env/algo settings.               | `default`     | `default`               | -->
 | `wrappers`  | Environment wrapper configuration pipeline.                             | `image_stack` | `image_stack`           |
 | `callbacks` | Callback/logging configuration group for training hooks.                | `sb3`         | `sb3`                   |
 | `seed`      | Global random seed used for train and eval environments.                | `42`          | Any integer             |
@@ -81,7 +81,6 @@ This might make your commits fail due to ruff checks, please consider the change
 This project builds on ideas and implementations from prior work in multi-agent reinforcement learning and world models, including:
 
 - Schwarting, W., Seyde, T., Gilitschenski, I., Liebenwein, L., Sander, R., Karaman, S., and Rus, D. (2020). _Deep Latent Competition: Learning to Race Using Visual Control Policies in Latent Space_. Conference on Robot Learning (CoRL 2020). https://arxiv.org/abs/2102.09812
-- Haarnoja, T., Zhou, A., Abbeel, P., and Levine, S. (2018). _Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor_. ICML 2018. https://arxiv.org/abs/1801.01290
 - Ha, D., and Schmidhuber, J. (2018). _World Models_. arXiv:1803.10122. https://arxiv.org/abs/1803.10122
 
 ## License

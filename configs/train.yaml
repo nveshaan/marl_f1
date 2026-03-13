@@ -1,16 +1,17 @@
 defaults:
-  - env: single
-  - algo: sac
+  - algo: dqn
   - policy: cnn
   - wrappers: image_stack
   - callbacks: sb3
   - _self_
 
+task: single
 seed: 42
 project: marl_f1
-experiment_name: ${env.name}_${algo.name}_${policy.name}_seed${seed}
+experiment_name: ${task}_${algo.name}_${policy.name}_seed${seed}
 device: ${device:}
 num_threads: 8
+env_id: MultiCarRacing-v0
 
 paths:
   tb: tb
@@ -24,13 +25,13 @@ train_env:
   _target_: utils.sb3.build_env
   env_cfg:
     _target_: stable_baselines3.common.env_util.make_vec_env
-    env_id: ${env.id}
+    env_id: ${env_id}
     n_envs: 4
     seed: ${seed}
     vec_env_cls:
       _target_: hydra.utils.get_class
       path: stable_baselines3.common.vec_env.DummyVecEnv
-    env_kwargs: ${env.env_kwargs}
+    env_kwargs: ${algo.env_kwargs}
     monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_train}
   wrappers: ${wrappers.train.wrappers}
 
@@ -38,13 +39,13 @@ eval_env:
   _target_: utils.sb3.build_env
   env_cfg:
     _target_: stable_baselines3.common.env_util.make_vec_env
-    env_id: ${env.id}
+    env_id: ${env_id}
     n_envs: 1
     seed: ${eval:'${seed} + 1000'}
     vec_env_cls:
       _target_: hydra.utils.get_class
       path: stable_baselines3.common.vec_env.DummyVecEnv
-    env_kwargs: ${env.env_kwargs}
+    env_kwargs: ${algo.env_kwargs}
     monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_eval}
   wrappers: ${wrappers.eval.wrappers}
 
