@@ -62,6 +62,11 @@ python -m scripts.train task=competitive algo=dqn seed=7 train_env.n_envs=8 num_
 
 Hydra-style overrides are supported, so you can also set additional fields from `configs/train.yaml`.
 
+To see training logs,
+```bash
+tensorboard --logdir experiments/tb
+```
+
 
 ## Contributing
 

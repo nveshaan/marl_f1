@@ -52,6 +52,7 @@ eval_env:
 train:
   total_timesteps: ${algo.train.total_timesteps}
   tb_log_name: ${experiment_name}
+  progress_bar: true
 
 hydra:
   run:

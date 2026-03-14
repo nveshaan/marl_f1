@@ -23,6 +23,7 @@ class BaselineAgent(BaseAgent):
             total_timesteps=self.cfg.train.total_timesteps,
             callback=self.callbacks,
             tb_log_name=self.cfg.train.tb_log_name,
+            progress_bar=self.cfg.train.progress_bar,
         )
         self.save(str(self.run_dir / "final_model"))
         self.train_env.save(str(self.run_dir / "vecnormalize.pkl"))
