@@ -46,7 +46,7 @@ uv sync --group notebook
 ## Training
 
 ```bash
-python -m scripts.train task=competitive algo=dqn seed=7 train_env.n_envs=8 num_threads=4
+python -m scripts.train --multirun algo=dqn seed=42,43
 ```
 
 | Argument    | Description                                                             | Default       | Available values        |
