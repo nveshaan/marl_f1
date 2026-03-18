@@ -36,6 +36,7 @@ def main(cfg: DictConfig) -> None:
 
     agent: BaseAgent = instantiate(cfg.algo.agent, cfg=cfg, _recursive_=False)
     agent.learn()
+    agent.save(run_dir)
 
 
 if __name__ == "__main__":

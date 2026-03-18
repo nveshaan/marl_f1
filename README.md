@@ -7,9 +7,7 @@
 marl_f1/
 ├── agents/
 │   ├── base_agent.py
-│   ├── baseline_agent.py
-│   ├── dreamer_agent.py
-│   └── worldmodel_agent.py
+│   └── baseline_agent.py
 ├── configs/
 │   └── train.yaml
 ├── models/
