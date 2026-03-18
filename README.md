@@ -10,7 +10,6 @@ marl_f1/
 │   └── baseline.py
 ├── configs/
 │   └── train.yaml
-├── models/
 ├── multi_car_racing/
 ├── scripts/
 │   ├── eval.py
@@ -55,8 +54,6 @@ python -m scripts.train task=competitive algo=dqn seed=7 train_env.n_envs=8 num_
 | `task`      | Experiment tag/profile used in naming.                                  | `single`      | ex. `competitive`       |
 | `algo`      | RL algorithm config, including model settings and training timesteps.   | `dqn`         | `dqn`, `sac`            |
 | `policy`    | Policy architecture/config used by the selected algorithm.              | `cnn`         | `cnn`                   |
-| `wrappers`  | Environment wrapper configuration pipeline.                             | `image_stack` | `image_stack`           |
-| `callbacks` | Callback/logging configuration group for training hooks.                | `sb3`         | `sb3`                   |
 | `seed`      | Global random seed used for train and eval environments.                | `42`          | Any integer             |
 
 Hydra-style overrides are supported, so you can also set additional fields from `configs/train.yaml`.
