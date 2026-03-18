@@ -26,6 +26,11 @@ dependencies = [
     "tqdm>=4.67.3",
 ]
 
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
 [tool.uv.workspace]
 members = [
     "multi_car_racing",
@@ -33,6 +38,12 @@ members = [
 
 [tool.uv.sources]
 gym-multi-car-racing = { workspace = true, editable = true }
+torch = [
+  { index = "pytorch-cu130", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+  { index = "pytorch-cu130", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
 
 [dependency-groups]
 dev = [
