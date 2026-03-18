@@ -14,8 +14,8 @@ model:
   verbose: 1
   tensorboard_log: ${hydra:runtime.output_dir}/${paths.tb}
 train:
-  total_timesteps: 100000
+  total_timesteps: 1000000
 agent:
-  _target_: agents.baseline_agent.BaselineAgent
+  _target_: agents.baseline.SingleAgent
 env_kwargs:
   num_agents: 1

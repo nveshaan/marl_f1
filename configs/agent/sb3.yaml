@@ -1,0 +1,48 @@
+train_env:
+  _target_: utils.sb3.build_env
+  env_cfg:
+    _target_: stable_baselines3.common.env_util.make_vec_env
+    env_id: ${env_id}
+    n_envs: 4
+    seed: ${seed}
+    vec_env_cls:
+      _target_: hydra.utils.get_class
+      path: stable_baselines3.common.vec_env.DummyVecEnv
+    env_kwargs: ${algo.env_kwargs}
+    monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_train}
+  wrappers:
+    - _target_: stable_baselines3.common.vec_env.VecMonitor
+    - _target_: stable_baselines3.common.vec_env.VecFrameStack
+      n_stack: 4
+    - _target_: stable_baselines3.common.vec_env.VecTransposeImage
+    - _target_: stable_baselines3.common.vec_env.VecNormalize
+      norm_obs: false
+      norm_reward: true
+      clip_reward: 10.0
+
+eval_env:
+  _target_: utils.sb3.build_env
+  env_cfg:
+    _target_: stable_baselines3.common.env_util.make_vec_env
+    env_id: ${env_id}
+    n_envs: 1
+    seed: ${eval:'${seed} + 1000'}
+    vec_env_cls:
+      _target_: hydra.utils.get_class
+      path: stable_baselines3.common.vec_env.DummyVecEnv
+    env_kwargs: ${algo.env_kwargs}
+    monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_eval}
+  wrappers:
+    - _target_: stable_baselines3.common.vec_env.VecMonitor
+    - _target_: stable_baselines3.common.vec_env.VecFrameStack
+      n_stack: 4
+    - _target_: stable_baselines3.common.vec_env.VecTransposeImage
+    - _target_: stable_baselines3.common.vec_env.VecNormalize
+      norm_obs: false
+      norm_reward: false
+      training: false
+
+train:
+  total_timesteps: ${algo.train.total_timesteps}
+  tb_log_name: ${experiment_name}
+  progress_bar: true

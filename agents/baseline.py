@@ -6,35 +6,33 @@ from stable_baselines3.common.callbacks import CallbackList, CheckpointCallback,
 from .base_agent import BaseAgent
 
 
-class BaselineAgent(BaseAgent):
-    """Model-Free Agent to act as the baseline against Model-Based agents.
-    Can be used as a Single, Cooperative, Competitive, Mixed Agents setup.
-    """
+class SingleAgent(BaseAgent):
+    """SB3 agent."""
 
     def __init__(self, cfg, **kwargs):
         super().__init__(cfg)
         self.run_dir = Path(cfg.run_dir)
-        self.train_env = instantiate(cfg.train_env, _recursive_=False)
-        self.eval_env = instantiate(cfg.eval_env, _recursive_=False)
+        self.train_env = instantiate(cfg.agent.train_env, _recursive_=False)
+        self.eval_env = instantiate(cfg.agent.eval_env, _recursive_=False)
         self.model = instantiate(cfg.algo.model, env=self.train_env)
 
         eval_cb = EvalCallback(
             eval_env=self.eval_env,
-            best_model_save_path=str(self.cfg.run_dir / "best_model"),
-            log_path=str(self.cfg.run_dir / "eval_logs"),
-            eval_freq=10_000,
+            best_model_save_path=str(self.run_dir / "best_model"),
+            log_path=str(self.run_dir / "eval_logs"),
+            eval_freq=10000,
             n_eval_episodes=5,
             deterministic=True,
         )
         ckpt_cb = CheckpointCallback(
-            save_freq=25_000,
-            save_path=str(self.cfg.run_dir / "checkpoints"),
+            save_freq=100000,
+            save_path=str(self.run_dir / "checkpoints"),
             name_prefix=self.cfg.algo.name,
         )
         self.callbacks = CallbackList([eval_cb, ckpt_cb])
 
     def learn(self) -> None:
-        self.model.learn(callbacks=self.callbacks, **self.cfg.train)
+        self.model.learn(callback=self.callbacks, **self.cfg.agent.train)
 
     def load(self, path: str) -> None:
         algo_cls = get_class(self.cfg.algo.model._target_)
@@ -44,9 +42,8 @@ class BaselineAgent(BaseAgent):
         self.model.save(str(path / "final_model"))
         self.train_env.save(str(path / "vecnormalize.pkl"))
 
-    def eval(self) -> None:  # FIXME
-        self.eval_env.training = False
-        self.eval_env.norm_reward = False
+    def eval(self) -> None:
+        raise NotImplementedError
 
     def get_model(self):
         return self.model
@@ -55,5 +52,6 @@ class BaselineAgent(BaseAgent):
         return self.train_env
 
 
-def make_baseline_agent(cfg):
-    return BaselineAgent(cfg)
+class MultiAgent(BaseAgent):
+    def __init__(self, cfg):
+        super().__init__(cfg)

@@ -7,7 +7,7 @@
 marl_f1/
 ├── agents/
 │   ├── base_agent.py
-│   └── baseline_agent.py
+│   └── baseline.py
 ├── configs/
 │   └── train.yaml
 ├── models/
@@ -20,6 +20,7 @@ marl_f1/
 ├── .gitignore
 ├── .gitmodules
 ├── LICENSE
+├── main.py
 ├── pyproject.toml
 └── README.md
 ```
