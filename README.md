@@ -10,6 +10,7 @@ marl_f1/
 │   └── baseline.py
 ├── configs/
 │   └── train.yaml
+├── models/
 ├── multi_car_racing/
 ├── scripts/
 │   ├── eval.py
@@ -18,6 +19,7 @@ marl_f1/
 │   └── sb3.py
 ├── .gitignore
 ├── .gitmodules
+├── AUTHORS
 ├── LICENSE
 ├── main.py
 ├── pyproject.toml
@@ -34,12 +36,12 @@ git clone --recurse-submodules https://github.com/nveshaan/marl_f1.git
 cd marl_f1
 uv sync
 
-# update the cloned repo
+# to update the cloned repo
 git pull
 git submodule update
 uv sync
 
-# play with notebooks
+# to play with notebooks
 uv sync --group notebook
 ```
 
@@ -60,7 +62,7 @@ Hydra-style overrides are supported, so you can also set additional fields from 
 
 To see training logs,
 ```bash
-tensorboard --logdir experiments/tb
+tensorboard --logdir ./experiments
 ```
 
 
@@ -78,7 +80,7 @@ This might make your commits fail due to ruff checks, please consider the change
 
 ## Acknowledgements
 
-This project builds on ideas and implementations from prior work in multi-agent reinforcement learning and world models, including:
+This project builds on ideas and implementations from prior work in multi-agent reinforcement learning, including:
 
 - Schwarting, W., Seyde, T., Gilitschenski, I., Liebenwein, L., Sander, R., Karaman, S., and Rus, D. (2020). _Deep Latent Competition: Learning to Race Using Visual Control Policies in Latent Space_. Conference on Robot Learning (CoRL 2020). https://arxiv.org/abs/2102.09812
 - Ha, D., and Schmidhuber, J. (2018). _World Models_. arXiv:1803.10122. https://arxiv.org/abs/1803.10122

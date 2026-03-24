@@ -16,4 +16,5 @@ train:
 agent:
   _target_: agents.baseline.SingleAgent
 env_kwargs:
+  seed: ${seed}
   num_agents: 1
