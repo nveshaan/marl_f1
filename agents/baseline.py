@@ -1,6 +1,8 @@
 from pathlib import Path
+import importlib
 
 from hydra.utils import get_class, instantiate
+from omegaconf import OmegaConf
 from stable_baselines3.common.callbacks import CallbackList, CheckpointCallback, EvalCallback
 
 from .base_agent import BaseAgent
@@ -14,7 +16,23 @@ class SingleAgent(BaseAgent):
         self.run_dir = Path(cfg.run_dir)
         self.train_env = instantiate(cfg.agent.train_env, _recursive_=False)
         self.eval_env = instantiate(cfg.agent.eval_env, _recursive_=False)
-        self.model = instantiate(cfg.algo.model, env=self.train_env)
+
+        # ── NEW: resolve policy_kwargs and convert features_extractor_class str → class ──
+        policy_kwargs = OmegaConf.to_container(cfg.policy.policy_kwargs, resolve=True)
+        if isinstance(policy_kwargs, dict) and "features_extractor_class" in policy_kwargs:
+            fec = policy_kwargs["features_extractor_class"]
+            if isinstance(fec, str):
+                module_path, class_name = fec.rsplit(".", 1)
+                policy_kwargs["features_extractor_class"] = getattr(
+                    importlib.import_module(module_path), class_name
+                )
+        # ────────────────────────────────────────────────────────────────────────────────
+
+        self.model = instantiate(
+            cfg.algo.model,
+            env=self.train_env,
+            policy_kwargs=policy_kwargs or None,
+        )
 
         eval_cb = EvalCallback(
             eval_env=self.eval_env,
@@ -55,3 +73,4 @@ class SingleAgent(BaseAgent):
 class MultiAgent(BaseAgent):
     def __init__(self, cfg):
         super().__init__(cfg)
+
