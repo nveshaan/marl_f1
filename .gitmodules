@@ -1,3 +1,6 @@
 [submodule "multi_car_racing"]
 	path = multi_car_racing
 	url = git@github.com:nveshaan/multi_car_racing.git
+[submodule "benchmarl"]
+	path = benchmarl
+	url = git@github.com:nveshaan/BenchMARL.git
