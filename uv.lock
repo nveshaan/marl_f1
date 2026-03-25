@@ -11,8 +11,8 @@ resolution-markers = [
 [manifest]
 members = [
     "benchmarl",
-    "gym-multi-car-racing",
     "marl-f1",
+    "multi-car-racing",
 ]
 
 [[package]]
@@ -430,29 +430,6 @@ wheels = [
 ]
 
 [[package]]
-name = "gym-multi-car-racing"
-version = "0.0.2"
-source = { editable = "multi_car_racing" }
-dependencies = [
-    { name = "box2d" },
-    { name = "gymnasium" },
-    { name = "numpy" },
-    { name = "pettingzoo" },
-    { name = "pygame" },
-    { name = "shapely" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "box2d" },
-    { name = "gymnasium" },
-    { name = "numpy" },
-    { name = "pettingzoo" },
-    { name = "pygame" },
-    { name = "shapely" },
-]
-
-[[package]]
 name = "gymnasium"
 version = "1.2.3"
 source = { registry = "https://pypi.org/simple" }
@@ -863,11 +840,11 @@ source = { virtual = "." }
 dependencies = [
     { name = "benchmarl" },
     { name = "box2d" },
-    { name = "gym-multi-car-racing" },
     { name = "gymnasium" },
     { name = "hydra-core" },
     { name = "hydra-joblib-launcher" },
     { name = "moviepy" },
+    { name = "multi-car-racing" },
     { name = "numpy" },
     { name = "omegaconf" },
     { name = "opencv-python" },
@@ -898,11 +875,11 @@ notebook = [
 requires-dist = [
     { name = "benchmarl", editable = "benchmarl" },
     { name = "box2d", specifier = ">=2.3.10" },
-    { name = "gym-multi-car-racing", editable = "multi_car_racing" },
     { name = "gymnasium", specifier = ">=1.2.3" },
     { name = "hydra-core", specifier = ">=1.3.2" },
     { name = "hydra-joblib-launcher", specifier = ">=1.2.0" },
     { name = "moviepy", specifier = ">=2.2.1" },
+    { name = "multi-car-racing", editable = "multi_car_racing" },
     { name = "numpy", specifier = ">=2.4.2" },
     { name = "omegaconf", specifier = ">=2.3.0" },
     { name = "opencv-python", specifier = ">=4.13.0.92" },
@@ -1029,6 +1006,29 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/e0/47/dd32fa426cc72114383ac549964eecb20ecfd886d1e5ccf5340b55b02f57/mpmath-1.3.0.tar.gz", hash = "sha256:7a28eb2a9774d00c7bc92411c19a89209d5da7c4c9a9e227be8330a23a25b91f", size = 508106, upload-time = "2023-03-07T16:47:11.061Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/43/e3/7d92a15f894aa0c9c4b49b8ee9ac9850d6e63b03c9c32c0367a13ae62209/mpmath-1.3.0-py3-none-any.whl", hash = "sha256:a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c", size = 536198, upload-time = "2023-03-07T16:47:09.197Z" },
+]
+
+[[package]]
+name = "multi-car-racing"
+version = "0.0.2"
+source = { editable = "multi_car_racing" }
+dependencies = [
+    { name = "box2d" },
+    { name = "gymnasium" },
+    { name = "numpy" },
+    { name = "pettingzoo" },
+    { name = "pygame" },
+    { name = "shapely" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "box2d" },
+    { name = "gymnasium" },
+    { name = "numpy" },
+    { name = "pettingzoo" },
+    { name = "pygame" },
+    { name = "shapely" },
 ]
 
 [[package]]
