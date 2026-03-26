@@ -20,7 +20,7 @@ from stable_baselines3.common.vec_env import (
 # ==============================
 # REGISTER ENV
 # ==============================
-importlib.import_module("gym_multi_car_racing")
+importlib.import_module("multi_car_racing")
 
 # ==============================
 # SELECT RUN
