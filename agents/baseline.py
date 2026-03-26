@@ -9,7 +9,28 @@ from .base_agent import BaseAgent
 
 
 class SingleAgent(BaseAgent):
-    """SB3 agent."""
+    """SB3 single agent implementation. This agent is used for training and evaluating single agents.
+
+    It is initialized with a configuration file that specifies the training and evaluation environments, the model architecture, and the training parameters. The agent can be trained, evaluated, and saved to disk.
+
+    An example configuration file for this agent might look like this:
+    agent:
+        train_env:
+            _target_: my_envs.MyTrainEnv
+        eval_env:
+            _target_: my_envs.MyEvalEnv
+    algo:
+        name: "PPO"
+        model:
+            _target_: stable_baselines3.PPO
+            n_steps: 2048
+            batch_size: 64
+            n_epochs: 10
+    policy:
+        name: cnn
+        policy: CnnPolicy
+        policy_kwargs: {}
+    """
 
     def __init__(self, cfg, **kwargs):
         super().__init__(cfg)

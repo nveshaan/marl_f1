@@ -3,11 +3,11 @@ defaults:
   - agent: sb3
   - algo: dqn
   - policy: cnn
+  - task: single
 
-task: single
 seed: 42
 project: marl_f1
-experiment_name: ${task}_${algo.name}_${policy.name}_seed${seed}
+experiment_name: ${task.name}_${algo.name}_${policy.name}_seed${seed}
 device: ${device:}
 num_threads: 8
 env_id: MultiCarRacing-v2

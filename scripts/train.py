@@ -9,7 +9,7 @@ from omegaconf import DictConfig, OmegaConf, open_dict
 
 from agents import BaseAgent
 
-importlib.import_module("gym_multi_car_racing")
+importlib.import_module("multi_car_racing")
 
 OmegaConf.register_new_resolver("eval", eval, replace=True)
 OmegaConf.register_new_resolver(
