@@ -1,8 +1,6 @@
 from pathlib import Path
-import importlib
 
-from hydra.utils import get_class, instantiate
-from omegaconf import OmegaConf
+from hydra.utils import instantiate
 from stable_baselines3.common.callbacks import CallbackList, CheckpointCallback, EvalCallback
 
 from .base_agent import BaseAgent
@@ -37,23 +35,7 @@ class SingleAgent(BaseAgent):
         self.run_dir = Path(cfg.run_dir)
         self.train_env = instantiate(cfg.agent.train_env, _recursive_=False)
         self.eval_env = instantiate(cfg.agent.eval_env, _recursive_=False)
-
-        # ── NEW: resolve policy_kwargs and convert features_extractor_class str → class ──
-        policy_kwargs = OmegaConf.to_container(cfg.policy.policy_kwargs, resolve=True)
-        if isinstance(policy_kwargs, dict) and "features_extractor_class" in policy_kwargs:
-            fec = policy_kwargs["features_extractor_class"]
-            if isinstance(fec, str):
-                module_path, class_name = fec.rsplit(".", 1)
-                policy_kwargs["features_extractor_class"] = getattr(
-                    importlib.import_module(module_path), class_name
-                )
-        # ────────────────────────────────────────────────────────────────────────────────
-
-        self.model = instantiate(
-            cfg.algo.model,
-            env=self.train_env,
-            policy_kwargs=policy_kwargs or None,
-        )
+        self.model = instantiate(cfg.algo.model, env=self.train_env)
 
         eval_cb = EvalCallback(
             eval_env=self.eval_env,
@@ -74,8 +56,8 @@ class SingleAgent(BaseAgent):
         self.model.learn(callback=self.callbacks, **self.cfg.agent.train)
 
     def load(self, path: str) -> None:
-        algo_cls = get_class(self.cfg.algo.model._target_)
-        self.model = algo_cls.load(path, env=self.train_env, device=self.cfg.device)
+        algo_cls = instantiate(self.cfg.algo.model, _partial_=True)
+        self.model = algo_cls.load(path, env=self.train_env)
 
     def save(self, path: str) -> None:
         self.model.save(str(path / "final_model"))
@@ -94,4 +76,3 @@ class SingleAgent(BaseAgent):
 class MultiAgent(BaseAgent):
     def __init__(self, cfg):
         super().__init__(cfg)
-

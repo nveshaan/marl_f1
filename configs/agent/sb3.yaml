@@ -1,5 +1,5 @@
 train_env:
-  _target_: utils.sb3.build_env
+  _target_: agents.common.sb3.build_env
   env_cfg:
     _target_: stable_baselines3.common.env_util.make_vec_env
     env_id: ${env_id}
@@ -21,7 +21,7 @@ train_env:
       clip_reward: 10.0
 
 eval_env:
-  _target_: utils.sb3.build_env
+  _target_: agents.common.sb3.build_env
   env_cfg:
     _target_: stable_baselines3.common.env_util.make_vec_env
     env_id: ${env_id}

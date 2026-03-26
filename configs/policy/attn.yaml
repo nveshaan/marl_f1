@@ -1,7 +1,9 @@
 name: attn
 policy: CnnPolicy
 policy_kwargs:
-  features_extractor_class: models.selection_attention_extractor.CNNWithSelectionAttention
+  features_extractor_class: 
+    _target_: models.selection_attention_extractor.CNNWithSelectionAttention
+    _partial_: true
   features_extractor_kwargs:
     features_dim: 256
 

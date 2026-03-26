@@ -6,21 +6,24 @@
 ```text
 marl_f1/
 ├── agents/
+│   ├── common/
+│   │   ├── bmarl.py
+│   │   └── sb3.py
 │   ├── base_agent.py
 │   └── baseline.py
 ├── benchmarl/
 ├── configs/
 │   └── train.yaml
+├── models/
+│   └── selection_attention_extractor.py
 ├── multi_car_racing/
 ├── scripts/
 │   ├── eval.py
 │   └── train.py
 ├── utils/
-│   └── sb3.py
 ├── .gitignore
 ├── .gitmodules
 ├── AUTHORS
-├── BENCHMARL_TASK_API_REFERENCE.md
 ├── LICENSE
 ├── main.py
 ├── pyproject.toml
