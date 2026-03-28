@@ -8,6 +8,7 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf, open_dict
 
 from agents import BaseAgent
+from utils.run_index import next_run_index
 
 importlib.import_module("multi_car_racing")
 
@@ -20,6 +21,9 @@ OmegaConf.register_new_resolver(
     if torch.cuda.is_available()
     else "cpu",
     replace=True,
+)
+OmegaConf.register_new_resolver(
+    "next_index", lambda name, base: next_run_index(name, base), replace=True
 )
 
 

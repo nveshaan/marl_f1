@@ -8,6 +8,7 @@ defaults:
 seed: 42
 project: marl_f1
 experiment_name: ${task.name}_${algo.name}_${policy.name}_seed${seed}
+timestamp: ${now:%Y%m%d_%H%M%S}
 device: ${device:}
 num_threads: 8
 env_id: MultiCarRacing-v2
@@ -22,9 +23,9 @@ paths:
 
 hydra:
   run:
-    dir: experiments/${experiment_name}_${now:%Y%m%d_%H%M%S}
+    dir: experiments/${experiment_name}_${next_index:${experiment_name}}
   sweep:
-    dir: experiments/multirun
-    subdir: ${experiment_name}_${hydra.job.num}
+    dir: experiments/
+    subdir: ${experiment_name}_${next_index:${experiment_name}}
   job:
     chdir: false

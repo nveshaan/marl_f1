@@ -6,8 +6,8 @@ train_env:
     n_envs: 4
     seed: ${seed}
     vec_env_cls:
-      _target_: hydra.utils.get_class
-      path: stable_baselines3.common.vec_env.DummyVecEnv
+      _target_: stable_baselines3.common.vec_env.DummyVecEnv
+      _partial_: true
     env_kwargs: ${algo.env_kwargs}
     monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_train}
   wrappers:
@@ -28,8 +28,8 @@ eval_env:
     n_envs: 1
     seed: ${eval:'${seed} + 1000'}
     vec_env_cls:
-      _target_: hydra.utils.get_class
-      path: stable_baselines3.common.vec_env.DummyVecEnv
+      _target_: stable_baselines3.common.vec_env.DummyVecEnv
+      _partial_: true
     env_kwargs: ${algo.env_kwargs}
     monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_eval}
   wrappers:
