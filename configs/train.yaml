@@ -13,6 +13,7 @@ device: ${device:}
 num_threads: 8
 env_id: MultiCarRacing-v2
 
+run_dir: ${hydra:runtime.output_dir}
 paths:
   tb: tb
   checkpoints: checkpoints
@@ -20,12 +21,13 @@ paths:
   monitor_eval: monitor_eval
   best_model: best_model
   eval_logs: eval_logs
+  viz: viz
 
 hydra:
   run:
-    dir: experiments/${experiment_name}_${next_index:${experiment_name}}
+    dir: experiments/${experiment_name}_${next_index:${experiment_name},experiments}
   sweep:
     dir: experiments/
-    subdir: ${experiment_name}_${next_index:${experiment_name}}
+    subdir: ${experiment_name}_${next_index:${experiment_name},experiments}
   job:
     chdir: false

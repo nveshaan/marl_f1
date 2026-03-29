@@ -18,7 +18,7 @@ def next_run_index(
     lock_path = base / ".run_index.lock"
     # Open the lock file and acquire an exclusive lock with timeout
     with open(lock_path, "a+") as lockf:
-        portalocker.lock(lockf, portalocker.LOCK_EX, timeout=lock_timeout)
+        portalocker.lock(lockf, portalocker.LOCK_EX)
         try:
             max_idx = -1
             prefix = f"{name}_"

@@ -3,9 +3,8 @@ from pathlib import Path
 
 import hydra
 import torch
-from hydra.core.hydra_config import HydraConfig
 from hydra.utils import instantiate
-from omegaconf import DictConfig, OmegaConf, open_dict
+from omegaconf import DictConfig, OmegaConf
 
 from agents import BaseAgent
 from utils.run_index import next_run_index
@@ -31,16 +30,12 @@ OmegaConf.register_new_resolver(
 def main(cfg: DictConfig) -> None:
     OmegaConf.resolve(cfg)
 
-    run_dir = Path(HydraConfig.get().runtime.output_dir)
     for path in cfg.paths.values():
-        (run_dir / path).mkdir(parents=True, exist_ok=True)
-
-    with open_dict(cfg):
-        cfg.run_dir = str(run_dir)
+        (Path(cfg.run_dir) / path).mkdir(parents=True, exist_ok=True)
 
     agent: BaseAgent = instantiate(cfg.algo.agent, cfg=cfg, _recursive_=False)
     agent.learn()
-    agent.save(run_dir)
+    agent.save(cfg.run_dir)
 
 
 if __name__ == "__main__":

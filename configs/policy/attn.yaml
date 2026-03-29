@@ -6,4 +6,3 @@ policy_kwargs:
     _partial_: true
   features_extractor_kwargs:
     features_dim: 256
-

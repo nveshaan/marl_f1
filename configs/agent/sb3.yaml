@@ -9,7 +9,7 @@ train_env:
       _target_: stable_baselines3.common.vec_env.DummyVecEnv
       _partial_: true
     env_kwargs: ${algo.env_kwargs}
-    monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_train}
+    monitor_dir: ${run_dir}/${paths.monitor_train}
   wrappers:
     - _target_: stable_baselines3.common.vec_env.VecMonitor
     - _target_: stable_baselines3.common.vec_env.VecFrameStack
@@ -31,7 +31,7 @@ eval_env:
       _target_: stable_baselines3.common.vec_env.DummyVecEnv
       _partial_: true
     env_kwargs: ${algo.env_kwargs}
-    monitor_dir: ${hydra:runtime.output_dir}/${paths.monitor_eval}
+    monitor_dir: ${run_dir}/${paths.monitor_eval}
   wrappers:
     - _target_: stable_baselines3.common.vec_env.VecMonitor
     - _target_: stable_baselines3.common.vec_env.VecFrameStack

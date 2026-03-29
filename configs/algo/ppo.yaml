@@ -10,7 +10,7 @@ model:
   batch_size: 256
   n_epochs: 10
   verbose: 1
-  tensorboard_log: ${hydra:runtime.output_dir}/${paths.tb}
+  tensorboard_log: ${run_dir}/${paths.tb}
 train:
   total_timesteps: 1000000
 agent:
