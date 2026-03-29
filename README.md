@@ -41,13 +41,23 @@ marl_f1/
 git clone --recurse-submodules https://github.com/nveshaan/marl_f1.git
 cd marl_f1
 uv sync
+```
 
-# to update the cloned repo
+To update the cloned repo,
+```bash
 git pull
 git submodule update
-uv sync
 
-# to play with notebooks
+# if you are contributing to submodules as well,
+cd {submodule}
+git checkout main
+git pull
+
+uv sync
+```
+
+To play with notebooks,
+```bash
 uv sync --group notebook
 ```
 
@@ -71,6 +81,11 @@ To see training logs,
 tensorboard --logdir ./experiments
 ```
 
+To evaluate and visualize feature maps,
+```bash
+python -m scripts.eval
+python -m scripts.playback
+```
 
 ## Contributing
 
