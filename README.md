@@ -11,7 +11,6 @@ marl_f1/
 │   │   └── sb3.py
 │   ├── base_agent.py
 │   └── baseline.py
-├── benchmarl/
 ├── configs/
 │   └── train.yaml
 ├── models/

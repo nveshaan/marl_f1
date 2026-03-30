@@ -10,7 +10,6 @@ resolution-markers = [
 
 [manifest]
 members = [
-    "benchmarl",
     "marl-f1",
     "multi-car-racing",
 ]
@@ -47,11 +46,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/be/a5/8e3f9b6771b0b4085
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d2/39/e7eaf1799466a4aef85b6a4fe7bd175ad2b1c6345066aa33f1f58d4b18d0/asttokens-3.0.1-py3-none-any.whl", hash = "sha256:15a3ebc0f43c2d0a50eeafea25e19046c68398e487b9f1f5b517f7c0f40f976a", size = 27047, upload-time = "2025-11-15T16:43:16.109Z" },
 ]
-
-[[package]]
-name = "benchmarl"
-version = "0.1.0"
-source = { editable = "benchmarl" }
 
 [[package]]
 name = "box2d"
@@ -838,7 +832,6 @@ name = "marl-f1"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "benchmarl" },
     { name = "box2d" },
     { name = "gymnasium" },
     { name = "hydra-core" },
@@ -874,7 +867,6 @@ notebook = [
 
 [package.metadata]
 requires-dist = [
-    { name = "benchmarl", editable = "benchmarl" },
     { name = "box2d", specifier = ">=2.3.10" },
     { name = "gymnasium", specifier = ">=1.2.3" },
     { name = "hydra-core", specifier = ">=1.3.2" },
