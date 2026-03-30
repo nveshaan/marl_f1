@@ -21,6 +21,7 @@ dependencies = [
     "setuptools<81",
     "shapely>=2.1.2",
     "stable-baselines3>=2.7.1",
+    "supersuit>=3.10.0",
     "tensorboard>=2.20.0",
     "torch>=2.10.0",
     "torchrl>=0.11.1",
