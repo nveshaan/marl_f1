@@ -1,1 +1,4 @@
 name: single
+env_kwargs:
+  seed: ${seed}
+  num_agents: 1

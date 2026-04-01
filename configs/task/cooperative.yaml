@@ -1,0 +1,5 @@
+name: competitive
+env_kwargs:
+  seed: ${seed}
+  num_agents: 2
+  use_ego_color: true

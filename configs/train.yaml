@@ -8,10 +8,11 @@ defaults:
 seed: 42
 project: marl_f1
 experiment_name: ${task.name}_${algo.name}_${policy.name}_seed${seed}
-timestamp: ${now:%Y%m%d_%H%M%S}
+timestamp:
 device: ${device:}
 num_threads: 8
 env_id: MultiCarRacing-v2
+env_kwargs:
 
 run_dir: ${hydra:runtime.output_dir}
 paths:

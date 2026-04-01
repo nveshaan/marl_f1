@@ -14,6 +14,6 @@ model:
 train:
   total_timesteps: 1000000
 agent:
-  _target_: agents.baseline.SingleAgent
+  _target_: agents.baseline.MultiAgent
 env_kwargs:
-  continuous: true
+  ctde: true
