@@ -7,10 +7,11 @@
 marl_f1/
 ├── agents/
 │   ├── common/
-│   │   ├── bmarl.py
-│   │   └── sb3.py
 │   ├── base_agent.py
-│   └── baseline.py
+│   ├── baseline.py
+│   └── common.py
+├── algorithms/
+│   └── mappo.py
 ├── configs/
 │   └── train.yaml
 ├── models/
@@ -21,7 +22,7 @@ marl_f1/
 │   ├── playback.py
 │   └── train.py
 ├── utils/
-│   └── run_index.py
+│   └── hydra.py
 ├── .gitignore
 ├── .gitmodules
 ├── AUTHORS
@@ -68,9 +69,9 @@ python -m scripts.train --multirun algo=dqn seed=42,43
 
 | Argument    | Description                                                             | Default       | Available values        |
 | ----------- | ----------------------------------------------------------------------- | ------------- | ----------------------- |
-| `task`      | Experiment tag/profile used in naming.                                  | `single`      | ex. `competitive`       |
-| `algo`      | RL algorithm config, including model settings and training timesteps.   | `dqn`         | `dqn`, `sac`            |
-| `policy`    | Policy architecture/config used by the selected algorithm.              | `cnn`         | `cnn`                   |
+| `task`      | Experiment tag/profile used in naming.                                  | `single`      | `competitive`, `cooperative`, `teams`       |
+| `algo`      | RL algorithm config, including model settings and training timesteps.   | `dqn`         | `dqn`, `sac`, `ppo`, `iql`, `ippo`, `mappo`, `maddpg`                         |
+| `policy`    | Policy architecture/config used by the selected algorithm.              | `cnn`         | `cnn`, `attn`                               |
 | `seed`      | Global random seed used for train and eval environments.                | `42`          | Any integer             |
 
 Hydra-style overrides are supported, so you can also set additional fields from `configs/train.yaml`.
