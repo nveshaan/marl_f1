@@ -6,7 +6,6 @@
 ```text
 marl_f1/
 ├── agents/
-│   ├── common/
 │   ├── base_agent.py
 │   ├── baseline.py
 │   └── common.py

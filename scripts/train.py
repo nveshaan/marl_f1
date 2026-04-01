@@ -1,6 +1,6 @@
+import datetime
 import importlib
 from pathlib import Path
-import datetime
 
 import hydra
 import torch

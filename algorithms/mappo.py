@@ -37,10 +37,16 @@ class MAPPOFeaturesExtractor(BaseFeaturesExtractor):
         # observations: (batch, num_agents, height, width, channels)
         batch_size = observations.shape[0]
         num_agents = observations.shape[1]
-        height, width, channels = observations.shape[2], observations.shape[3], observations.shape[4]
+        height, width, channels = (
+            observations.shape[2],
+            observations.shape[3],
+            observations.shape[4],
+        )
 
         # Reshape to (batch, channels, num_agents * height, width)
-        obs_reshaped = observations.permute(0, 4, 1, 2, 3).reshape(batch_size, channels, num_agents * height, width)
+        obs_reshaped = observations.permute(0, 4, 1, 2, 3).reshape(
+            batch_size, channels, num_agents * height, width
+        )
 
         return self.cnn(obs_reshaped)
 
@@ -56,7 +62,7 @@ class MAPPOPolicy(ActorCriticPolicy):
             lr_schedule,
             features_extractor_class=MAPPOFeaturesExtractor,
             features_extractor_kwargs={"num_agents": num_agents},
-            **kwargs
+            **kwargs,
         )
 
     def forward(self, obs, deterministic=False):
@@ -103,22 +109,25 @@ class MAPPO(PPO):
 
 if __name__ == "__main__":
     """Test MAPPO with CTDE PettingZoo environment."""
-    from multi_car_racing import MultiCarRacingParallelEnv
     import supersuit as ss
+
+    from multi_car_racing import MultiCarRacingParallelEnv
 
     print("Creating CTDE environment...")
     env = MultiCarRacingParallelEnv(num_agents=2, ctde=True, include_actions=False)
     env = ss.pad_observations_v0(env)
     env = ss.pad_action_space_v0(env)
-    env = ss.dtype_v0(env, 'float32')
+    env = ss.dtype_v0(env, "float32")
     env = ss.pettingzoo_env_to_vec_env_v1(env)
-    env = ss.concat_vec_envs_v1(env, num_vec_envs=2, num_cpus=1, base_class='stable_baselines3')
+    env = ss.concat_vec_envs_v1(env, num_vec_envs=2, num_cpus=1, base_class="stable_baselines3")
 
     print(f"Observation space: {env.observation_space}")
     print(f"Action space: {env.action_space}")
 
     print("Creating MAPPO model...")
-    model = MAPPO(MAPPOPolicy, env, num_agents=2, verbose=1, n_steps=128, batch_size=256, n_epochs=4)
+    model = MAPPO(
+        MAPPOPolicy, env, num_agents=2, verbose=1, n_steps=128, batch_size=256, n_epochs=4
+    )
 
     print("Training for a few steps...")
     model.learn(total_timesteps=1000, progress_bar=True)

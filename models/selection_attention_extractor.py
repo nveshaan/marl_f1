@@ -3,11 +3,13 @@ import torch.nn as nn
 from gymnasium import spaces
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
+
 class SpatialSelectionAttention(nn.Module):
     """
     Selection-style spatial attention.
     Learns an importance mask over HxW and reweights CNN features.
     """
+
     def __init__(self):
         super().__init__()
         # use both average and max pooling across channels as cues
@@ -16,17 +18,19 @@ class SpatialSelectionAttention(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: [B, C, H, W]
-        avg = x.mean(dim=1, keepdim=True)          # [B, 1, H, W]
-        mx, _ = x.max(dim=1, keepdim=True)         # [B, 1, H, W]
-        pooled = torch.cat([avg, mx], dim=1)       # [B, 2, H, W]
-        mask = self.sigmoid(self.conv(pooled))     # [B, 1, H, W] in (0,1)
-        return x * mask                            # elementwise selection
+        avg = x.mean(dim=1, keepdim=True)  # [B, 1, H, W]
+        mx, _ = x.max(dim=1, keepdim=True)  # [B, 1, H, W]
+        pooled = torch.cat([avg, mx], dim=1)  # [B, 2, H, W]
+        mask = self.sigmoid(self.conv(pooled))  # [B, 1, H, W] in (0,1)
+        return x * mask  # elementwise selection
+
 
 class CNNWithSelectionAttention(BaseFeaturesExtractor):
     """
     Reuses a standard SB3-style CNN, then applies SpatialSelectionAttention,
     then flattens to features_dim.
     """
+
     def __init__(self, observation_space: spaces.Box, features_dim: int = 256):
         super().__init__(observation_space, features_dim)
         n_channels = observation_space.shape[0]
@@ -61,4 +65,3 @@ class CNNWithSelectionAttention(BaseFeaturesExtractor):
         x = self.cnn(x)
         x = self.attn(x)
         return self.linear(x)
-
