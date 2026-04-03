@@ -320,6 +320,6 @@ class SingleAgent(BaseAgent):
         return self.train_env
 
 
-class MultiAgent(BaseAgent):
+class MultiAgent(SingleAgent):
     def __init__(self, cfg):
         super().__init__(cfg)

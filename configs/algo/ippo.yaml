@@ -1,4 +1,4 @@
-name: ppo
+name: ippo
 family: model_free
 model:
   _target_: stable_baselines3.PPO

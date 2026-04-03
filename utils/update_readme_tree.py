@@ -9,7 +9,6 @@ README = ROOT / "README.md"
 CONFIGS_DIR = ROOT / "configs"
 TRAIN_CONFIG = CONFIGS_DIR / "train.yaml"
 MCR_DIR = ROOT / "multi_car_racing"
-BENCHMARL_DIR = ROOT / "benchmarl"
 
 BEGIN = "<!-- BEGIN:PROJECT_TREE -->"
 END = "<!-- END:PROJECT_TREE -->"
@@ -45,9 +44,6 @@ def visible(path: Path) -> bool:
         return False
 
     if path != MCR_DIR and path.is_relative_to(MCR_DIR):
-        return False
-
-    if path != BENCHMARL_DIR and path.is_relative_to(BENCHMARL_DIR):
         return False
 
     return not path.name.endswith(".egg-info")

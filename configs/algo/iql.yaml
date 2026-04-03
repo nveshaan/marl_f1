@@ -2,18 +2,18 @@ name: iql
 family: model_free
 model:
   _target_: stable_baselines3.DQN
-  seed: null # Seed is None to avoid incompatibility with supersuit's ConcatVecEnv
   device: ${device}
   policy: ${policy.policy}
   policy_kwargs: ${policy.policy_kwargs}
   learning_rate: 1e-4
-  buffer_size: 10000 # Reduced from 100000 to fit in memory with vectorized environment
+  buffer_size: 100000
   batch_size: 32
   verbose: 1
   tensorboard_log: ${run_dir}/${paths.tb}
 train:
   total_timesteps: 1000000
 agent:
-  _target_: agents.baseline.SingleAgent
+  _target_: agents.baseline.MultiAgent
 env_kwargs:
   continuous: false
+  

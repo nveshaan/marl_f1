@@ -1,3 +1,0 @@
-name: mlp
-policy: MlpPolicy
-policy_kwargs: {}

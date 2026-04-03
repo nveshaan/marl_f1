@@ -1,0 +1,9 @@
+defaults:
+  - attn
+
+policy_kwargs:
+  features_extractor_class: 
+    _target_: models.ctde.CTDEFeaturesExtractorWithSelectionAttention
+    _partial_: true
+  features_extractor_kwargs:
+    features_dim: 512

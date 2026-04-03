@@ -1,0 +1,19 @@
+name: maddpg
+family: model_free
+model:
+  _target_: stable_baselines3.DDPG
+  seed: ${seed}
+  device: ${device}
+  policy: ${policy.policy}
+  policy_kwargs: ${policy.policy_kwargs}
+  learning_rate: 3e-4
+  buffer_size: 1000000
+  batch_size: 256
+  verbose: 1
+  tensorboard_log: ${run_dir}/${paths.tb}
+train:
+  total_timesteps: 1000000
+agent:
+  _target_: agents.baseline.MultiAgent
+env_kwargs:
+  ctde: true
