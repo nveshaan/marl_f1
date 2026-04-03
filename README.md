@@ -9,8 +9,6 @@ marl_f1/
 │   ├── base_agent.py
 │   ├── baseline.py
 │   └── common.py
-├── algorithms/
-│   └── mappo.py
 ├── configs/
 │   └── train.yaml
 ├── models/
@@ -44,6 +42,7 @@ uv sync
 ```
 
 To update the cloned repo,
+
 ```bash
 git pull
 git submodule update
@@ -57,6 +56,7 @@ uv sync
 ```
 
 To play with notebooks,
+
 ```bash
 uv sync --group notebook
 ```
@@ -67,21 +67,24 @@ uv sync --group notebook
 python -m scripts.train --multirun algo=dqn seed=42,43
 ```
 
-| Argument    | Description                                                             | Default       | Available values        |
-| ----------- | ----------------------------------------------------------------------- | ------------- | ----------------------- |
-| `task`      | Experiment tag/profile used in naming.                                  | `single`      | `competitive`, `cooperative`, `teams`       |
-| `algo`      | RL algorithm config, including model settings and training timesteps.   | `dqn`         | `dqn`, `sac`, `ppo`, `iql`, `ippo`, `mappo`, `maddpg`                         |
-| `policy`    | Policy architecture/config used by the selected algorithm.              | `cnn`         | `cnn`, `attn`                               |
-| `seed`      | Global random seed used for train and eval environments.                | `42`          | Any integer             |
+| Argument | Description                                                           | Default  | Available values                                      |
+| -------- | --------------------------------------------------------------------- | -------- | ----------------------------------------------------- |
+| `task`   | Experiment tag/profile used in naming.                                | `single` | `competitive`, `cooperative`, `teams`                 |
+| `algo`   | RL algorithm config, including model settings and training timesteps. | `dqn`    | `dqn`, `sac`, `ppo`, `iql`, `ippo`, `mappo`, `maddpg` |
+| `policy` | Policy architecture/config used by the selected algorithm.            | `cnn`    | `cnn`, `attn`                                         |
+| `agent`  | Environment wrapper/vectorization backend.                            | `sb3`    | `ss`, `sb3`                                           |
+| `seed`   | Global random seed used for train and eval environments.              | `42`     | Any integer                                           |
 
 Hydra-style overrides are supported, so you can also set additional fields from `configs/train.yaml`.
 
 To see training logs,
+
 ```bash
 tensorboard --logdir ./experiments
 ```
 
 To evaluate and visualize feature maps,
+
 ```bash
 python -m scripts.eval
 python -m scripts.playback
