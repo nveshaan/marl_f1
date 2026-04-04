@@ -13,5 +13,4 @@ def build_ss_env(env_cfg, wrappers):
     env = instantiate(env_cfg, **env_kwargs)
     for wrapper in wrappers:
         env = instantiate(wrapper, env)
-    print(f"Built environment: {env}")
     return env

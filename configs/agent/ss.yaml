@@ -4,7 +4,6 @@ train_env:
     _target_: multi_car_racing.parallel_env
     env_kwargs: ${env_kwargs}
   wrappers:
-    - _target_: supersuit.black_death_v3
     - _target_: supersuit.pettingzoo_env_to_vec_env_v1
     - _target_: supersuit.concat_vec_envs_v1
       num_vec_envs: 4
@@ -25,7 +24,6 @@ eval_env:
     _target_: multi_car_racing.parallel_env
     env_kwargs: ${env_kwargs}
   wrappers:
-    - _target_: supersuit.black_death_v3
     - _target_: supersuit.pettingzoo_env_to_vec_env_v1
     - _target_: supersuit.concat_vec_envs_v1
       num_vec_envs: 1
