@@ -47,9 +47,9 @@ To update the cloned repo,
 git pull
 git submodule update
 
-# if you are contributing to submodules as well,
-cd {submodule}
-git checkout main
+# if you are contributing to submodule as well,
+cd multi_car_racing
+git checkout master
 git pull
 
 uv sync
