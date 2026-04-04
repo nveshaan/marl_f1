@@ -64,7 +64,14 @@ uv sync --group notebook
 ## Training
 
 ```bash
-python -m scripts.train --multirun algo=dqn seed=42,43
+# for single-agent
+python -m scripts.train --multirun agent=sb3 algo=dqn,ppo,sac task=single policy=cnn,attn seed=42,43
+
+# for independent multi-agent
+python -m scripts.train --multirun agent=ss algo=iql,ippo task=competitive,cooperative policy=cnn,attn seed=42,43
+
+# for ctde multi-agent
+python -m scripts.train --multirun agent=ss algo=mappo,maddpg task=competitive,cooperative policy=ctde_cnn,ctde_attn seed=42,43
 ```
 
 | Argument | Description                                                           | Default  | Available values                                      |
