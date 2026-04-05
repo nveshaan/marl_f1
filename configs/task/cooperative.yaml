@@ -1,7 +1,7 @@
-name: competitive
+name: cooperative
 env_kwargs:
   seed: ${seed}
   num_agents: 2
   team_ids: [0, 0]
   use_ego_color: true
-  reset_on_agent_death: true
+  auto_reset: true

@@ -4,4 +4,4 @@ env_kwargs:
   num_agents: 2
   team_ids: [0, 1]
   use_ego_color: true
-  reset_on_agent_death: true
+  auto_reset: true
