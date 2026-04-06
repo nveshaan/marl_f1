@@ -2,7 +2,6 @@ name: ippo
 family: model_free
 model:
   _target_: stable_baselines3.PPO
-  seed: ${seed}
   device: ${device}
   policy: ${policy.policy}
   policy_kwargs: ${policy.policy_kwargs}
@@ -16,3 +15,4 @@ train:
 agent:
   _target_: agents.baseline.MultiAgent
 env_kwargs:
+  continuous: true
