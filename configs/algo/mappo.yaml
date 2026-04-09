@@ -2,9 +2,10 @@ name: mappo
 family: model_free
 model:
   _target_: stable_baselines3.PPO
-  seed: ${seed}
   device: ${device}
-  policy: ${policy.policy}
+  policy:
+    _target_: hydra.utils.get_class
+    path: models.MAPPO
   policy_kwargs: ${policy.policy_kwargs}
   learning_rate: 3e-4
   batch_size: 256

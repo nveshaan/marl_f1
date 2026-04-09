@@ -5,19 +5,20 @@ from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 from .selection_attention_extractor import SpatialSelectionAttention
 
 
-# TODO: look into how to allow dynamic number of agents
 class CTDEFeaturesExtractor(BaseFeaturesExtractor):
-    def __init__(self, observation_space, features_dim=512):
+    """Efficient CNN extractor for stacked CTDE image observations.
+
+    This version processes the full tensor in one batched CNN pass instead of
+    looping over agents in Python.
+    """
+
+    def __init__(self, observation_space, features_dim=512, n_agents=None):
         super().__init__(observation_space, features_dim)
+        self.n_channels = observation_space.shape[0] // n_agents
+        self.n_agents = n_agents
 
-        self.n_agents = len(observation_space["global_obs"].spaces)
-        n_channels = (
-            observation_space["global_obs"]["agent_0"].shape[-1] * self.n_agents
-        )  # assuming all agents have same obs shape
-
-        # Standard NatureCNN architecture used by SB3
         self.cnn = nn.Sequential(
-            nn.Conv2d(n_channels, 32, kernel_size=8, stride=4),
+            nn.Conv2d(self.n_channels, 32, kernel_size=8, stride=4),
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=4, stride=2),
             nn.ReLU(),
@@ -25,75 +26,70 @@ class CTDEFeaturesExtractor(BaseFeaturesExtractor):
             nn.ReLU(),
         )
 
-        # Compute flatten size by doing a dummy forward pass
         with torch.no_grad():
-            sample = observation_space.sample()
-            sample_tensor = torch.as_tensor(sample["global_obs"]["agent_0"][None]).float()
-            sample_tensor = sample_tensor.reshape(1, -1, 96, 96) / 255.0  # Proper shape
-            n_flatten = self.cnn(sample_tensor).view(1, -1).shape[1]
-
-        if "global_actions" in observation_space:
-            action_size = observation_space
-            n_flatten += action_size
+            sample = torch.as_tensor(observation_space.sample()[None]).float()  # (1, C, H, W)
+            sample = sample[:, : self.n_channels] / 255.0
+            n_flatten = self.cnn(sample).flatten(1).shape[1]
 
         self.linear = nn.Sequential(
+            nn.Flatten(),
             nn.Linear(n_flatten, features_dim),
             nn.ReLU(),
         )
 
+    def _group_agent_channels(self, observations):
+        """Regroup channels to per-agent tensors in one vectorized pass.
+
+        Expected channel order in input is frame-major with agent RGB blocks:
+        [f0_a0_rgb, f0_a1_rgb, ..., f1_a0_rgb, f1_a1_rgb, ...].
+        """
+        single_image_channels = 3
+        b, c, h, w = observations.shape
+        frame_block = self.n_agents * single_image_channels
+
+        if c % frame_block != 0:
+            raise ValueError(
+                f"Invalid channel count {c}: expected multiple of {frame_block} "
+                f"(n_agents={self.n_agents}, rgb={single_image_channels})."
+            )
+
+        n_frames = c // frame_block
+        if n_frames * single_image_channels != self.n_channels:
+            raise ValueError(
+                f"Per-agent channels mismatch: got {self.n_channels}, expected "
+                f"{n_frames * single_image_channels}."
+            )
+
+        # (B, C, H, W) -> (B, F, N, 3, H, W) -> (B, N, F*3, H, W)
+        observations = observations.reshape(b, n_frames, self.n_agents, single_image_channels, h, w)
+        observations = observations.permute(0, 2, 1, 3, 4, 5)
+        return observations.reshape(b, self.n_agents, self.n_channels, h, w)
+
     def forward(self, observations):
-        # observations["global_obs"] = dict of frames
-        # Stack all frames and process through CNN
-        frames = [
-            observations["global_obs"][f"agent_{i}"][:: self.n_agents] for i in range(self.n_agents)
-        ]
-        if "global_actions" in observations:
-            actions = [
-                observations["global_actions"][f"agent_{i}"][:: self.n_agents]
-                for i in range(self.n_agents)
-            ]
-        x = torch.stack(frames, dim=1)  # (batch, agents, channels, h, w)
-        x = x.view(
-            x.shape[0], x.shape[1] * x.shape[2], x.shape[3], x.shape[4]
-        )  # (batch, agents*channels, h, w)
+        observations = observations.float()
+        observations = observations / 255.0
+        observations = self._group_agent_channels(observations)  # B, N, C_per_agent, H, W
+        x = observations.reshape(
+            -1, self.n_channels, *observations.shape[3:]
+        )  # (B*N), C_per_agent, H, W
         x = self.cnn(x)
-        x = x.view(x.shape[0], -1)  # flatten
-        actions_flat = (
-            torch.cat([a.flatten(1) for a in actions], dim=1)
-            if "global_actions" in observations
-            else None
-        )
-        final = torch.cat([x, actions_flat], dim=1) if actions_flat is not None else x
-        return self.linear(final)
+        x = self.linear(x)
+        return x.view(-1, self.n_agents, x.shape[1])  # B, (N*features_dim)
 
 
 class CTDEFeaturesExtractorWithSelectionAttention(CTDEFeaturesExtractor):
-    def __init__(self, observation_space, features_dim=512):
-        super().__init__(observation_space, features_dim)
+    def __init__(self, observation_space, features_dim=512, n_agents=None):
+        super().__init__(observation_space, features_dim, n_agents)
         self.attn = SpatialSelectionAttention()
 
     def forward(self, observations):
-        # observations["global_obs"] = dict of frames
-        # Stack all frames and process through CNN
-        frames = [
-            observations["global_obs"][f"agent_{i}"][:: self.n_agents] for i in range(self.n_agents)
-        ]
-        if "global_actions" in observations:
-            actions = [
-                observations["global_actions"][f"agent_{i}"][:: self.n_agents]
-                for i in range(self.n_agents)
-            ]
-        x = torch.stack(frames, dim=1)  # (batch, agents, channels, h, w)
-        x = x.view(
-            x.shape[0], x.shape[1] * x.shape[2], x.shape[3], x.shape[4]
-        )  # (batch, agents*channels, h, w)
-        x = self.cnn(x)
+        observations = observations.float()
+        observations = observations / 255.0
+        observations = self._group_agent_channels(observations)  # B, N, C_per_agent, H, W
+        observations = observations.view(
+            -1, self.n_channels, *observations.shape[3:]
+        )  # (B*N), C_per_agent, H, W
+        x = self.cnn(observations)
         x = self.attn(x)
-        x = x.view(x.shape[0], -1)  # flatten
-        actions_flat = (
-            torch.cat([a.flatten(1) for a in actions], dim=1)
-            if "global_actions" in observations
-            else None
-        )
-        final = torch.cat([x, actions_flat], dim=1) if actions_flat is not None else x
-        return self.linear(final)
+        x = self.linear(x)
+        return x.view(-1, self.n_agents, x.shape[1])  # B, (N*features_dim)

@@ -1,9 +1,11 @@
 defaults:
   - attn
 
+name: ctde_attn
+policy: ${algo.model.policy}
 policy_kwargs:
   features_extractor_class: 
-    _target_: models.ctde.CTDEFeaturesExtractorWithSelectionAttention
+    _target_: models.CTDEFeaturesExtractorWithSelectionAttention
     _partial_: true
   features_extractor_kwargs:
-    features_dim: 512
+    n_agents: ${task.env_kwargs.num_agents}
