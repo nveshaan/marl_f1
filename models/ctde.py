@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
-from .selection_attention_extractor import SpatialSelectionAttention
+from .attn import SpatialSelectionAttention
 
 
 class CTDEFeaturesExtractor(BaseFeaturesExtractor):
