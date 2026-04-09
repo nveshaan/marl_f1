@@ -2,12 +2,13 @@ name: maddpg
 family: model_free
 model:
   _target_: stable_baselines3.DDPG
-  seed: ${seed}
   device: ${device}
-  policy: ${policy.policy}
+  policy:
+    _target_: hydra.utils.get_class
+    path: models.MADDPG
   policy_kwargs: ${policy.policy_kwargs}
   learning_rate: 3e-4
-  buffer_size: 1000000
+  buffer_size: 10000
   batch_size: 256
   verbose: 1
   tensorboard_log: ${run_dir}/${paths.tb}
