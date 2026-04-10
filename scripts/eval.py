@@ -1,16 +1,19 @@
-import fnmatch
+import datetime
 import importlib
-import shutil
+import sys
 from pathlib import Path
 
+import hydra
 import torch
 from hydra.utils import instantiate
-from omegaconf import OmegaConf
+from omegaconf import DictConfig, OmegaConf
 
 from agents import BaseAgent
+from utils.hydra import next_run_index
 
 importlib.import_module("multi_car_racing")
-OmegaConf.register_new_resolver("eval", lambda expr: eval(expr))
+
+OmegaConf.register_new_resolver("eval", eval, replace=True)
 OmegaConf.register_new_resolver(
     "device",
     lambda: "mps"
@@ -20,86 +23,42 @@ OmegaConf.register_new_resolver(
     else "cpu",
     replace=True,
 )
+OmegaConf.register_new_resolver(
+    "next_index", lambda name, base: next_run_index(name, base), replace=True
+)
 
 
-def select_run(base_dir="experiments"):
-    """Prompt user to select a completed run from experiments directory."""
-    base_path = Path(base_dir)
+@hydra.main(version_base=None, config_path="../configs", config_name="eval")
+def main(cfg: DictConfig) -> None:
+    cfg.env_kwargs = {**cfg.task.env_kwargs, **cfg.algo.env_kwargs}
+    cfg.timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-    runs = sorted(
-        [p for p in base_path.iterdir() if p.is_dir() and (p / "best_model").exists()],
-        key=lambda x: x.name,
-    )
+    run_dir = Path(cfg.run_dir)
+    for path in cfg.paths.values():
+        (run_dir / path).mkdir(parents=True, exist_ok=True)
 
-    if not runs:
-        raise ValueError(f"No completed runs found in {base_dir}")
+    best_model_dir = run_dir / cfg.paths.best_model
+    best_model_zip = best_model_dir / "best_model.zip"
+    worldmodel_pt = best_model_dir / "worldmodel.pt"
 
-    print("\n=== Available runs ===\n")
-    for i, run in enumerate(runs):
-        print(f"[{i}] {run.name}")
+    if best_model_zip.exists():
+        load_path = str(best_model_zip)
+    elif worldmodel_pt.exists():
+        load_path = str(best_model_dir)
+    else:
+        print(f"Error: Best model not found in {best_model_dir}", file=sys.stderr)
+        sys.exit(1)
 
-    idx = int(input("\nSelect run index: "))
-    return runs[idx]
-
-
-def main():
-    run_dir = select_run("experiments")
-    print(f"\nSelected run: {run_dir}\n")
-
-    viz_dir = run_dir / "viz"
-    if viz_dir.exists():
-        shutil.rmtree(viz_dir)
-    viz_dir.mkdir(parents=True, exist_ok=True)
-
-    config_path = run_dir / ".hydra" / "config.yaml"
-    if not config_path.exists():
-        raise ValueError(f"Config not found at {config_path}")
-
-    cfg = OmegaConf.load(config_path)
-    cfg.run_dir = str(run_dir)
-    OmegaConf.resolve(cfg)
-
-    policy_name = cfg.get("policy", {}).get("name", "unknown")
-    print(f"\n=== Model Policy: {policy_name} ===\n")
-
-    print("Instantiating agent...")
+    print(f"Instantiating agent from {cfg.algo.name}...")
     agent: BaseAgent = instantiate(cfg.algo.agent, cfg=cfg, _recursive_=False)
 
-    print("\nDiscovering available layers...")
-    available_layers = agent.get_available_layers()
+    print(f"Loading best model from {load_path}...")
+    agent.load(load_path)
 
-    if not available_layers:
-        print("No hookable layers found. Proceeding with empty layer selection.")
-        selected_layers = []
-    else:
-        print("\n=== Available Layers ===")
-        for i, (name, _) in enumerate(available_layers):
-            print(f"[{i}] {name}")
-        print("\nSelect layers to save (use patterns or indices):")
-        print('  Examples: "all", "relu_*", "0,2,4", "attn_0,attn_2"')
-        selection = input("\nYour selection: ").strip()
-        if selection.lower() == "all":
-            selected_layers = [name for name, _ in available_layers]
-        else:
-            selected = []
-            layer_names = [name for name, _ in available_layers]
-            for part in selection.split(","):
-                part = part.strip()
-                if part.isdigit():
-                    idx = int(part)
-                    if 0 <= idx < len(layer_names):
-                        selected.append(layer_names[idx])
-                else:
-                    matched = fnmatch.filter(layer_names, part)
-                    selected.extend(matched)
-            selected_layers = list(set(selected))
+    num_steps = cfg.get("num_steps", None)
+    selected_layers = cfg.get("selected_layers", None)
 
-    num_steps = None
-    steps_input = input("\nMax steps (press Enter for full episode): ").strip()
-    if steps_input.isdigit():
-        num_steps = int(steps_input)
-
-    print("\nStarting evaluation with feature visualization...")
+    print("\nStarting evaluation with loaded best model...")
     agent.eval(num_steps=num_steps, deterministic=True, selected_layers=selected_layers)
 
 

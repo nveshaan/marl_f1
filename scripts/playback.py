@@ -2,24 +2,26 @@ import math
 from pathlib import Path
 
 import cv2
+import hydra
 import numpy as np
+import torch
+from omegaconf import DictConfig, OmegaConf
 
+from utils.hydra import next_run_index
 
-def select_run(base_dir="experiments"):
-    base_path = Path(base_dir)
-
-    runs = sorted([p for p in base_path.iterdir() if p.is_dir()], key=lambda x: x.name)
-
-    if len(runs) == 0:
-        print("No runs found!")
-        exit()
-
-    print("\n=== Available runs ===\n")
-    for i, run in enumerate(runs):
-        print(f"[{i}] {run.name}")
-
-    idx = int(input("\nSelect run index: "))
-    return runs[idx]
+OmegaConf.register_new_resolver("eval", eval, replace=True)
+OmegaConf.register_new_resolver(
+    "device",
+    lambda: "mps"
+    if torch.backends.mps.is_available()
+    else "cuda"
+    if torch.cuda.is_available()
+    else "cpu",
+    replace=True,
+)
+OmegaConf.register_new_resolver(
+    "next_index", lambda name, base: next_run_index(name, base), replace=True
+)
 
 
 def make_grid(fmap, variance_threshold=None):
@@ -55,17 +57,20 @@ def make_grid(fmap, variance_threshold=None):
     return grid
 
 
-def main():
+@hydra.main(version_base=None, config_path="../configs", config_name="eval")
+def main(cfg: DictConfig) -> None:
     """Main playback loop for visualizing frames and feature maps."""
-    run_dir = select_run("experiments")
-    print(f"\nSelected run: {run_dir}\n")
+    run_dir = Path(cfg.run_dir)
+    print(f"\nTarget run dir: {run_dir}\n")
 
     name = run_dir.name.lower()
-    is_cnn = "cnn" in name
-    is_attn = "attn" in name
+    policy_name = cfg.get("policy", {}).get("name", "").lower()
+    is_cnn = "cnn" in name or "cnn" in policy_name
+    is_attn = "attn" in name or "attn" in policy_name
 
-    frames_dir = run_dir / "viz" / "frames"
-    fmap_dir = run_dir / "viz" / "feature_maps"
+    viz_path = cfg.paths.viz if "paths" in cfg and "viz" in cfg.paths else "viz"
+    frames_dir = run_dir / viz_path / "frames"
+    fmap_dir = run_dir / viz_path / "feature_maps"
 
     if not frames_dir.exists():
         frames_dir = run_dir / "frames"
@@ -73,7 +78,6 @@ def main():
         fmap_dir = run_dir / "feature_maps"
 
     fps = 30
-    delay = int(1000 / fps)
 
     screen_w, screen_h = 1280, 720  # fallback
     try:
@@ -94,6 +98,8 @@ def main():
 
     print(f"Found {len(frame_files)} frames")
 
+    out_path = run_dir / "playback.mp4"
+    video_writer = None
     any_shown = False
     for _idx, frame_path in enumerate(frame_files):
         step = frame_path.stem.split("_")[-1]
@@ -153,20 +159,21 @@ def main():
         scale = min(screen_w / w, screen_h / h, 1.0)
         combined = cv2.resize(combined, (int(w * scale), int(h * scale)))
 
-        cv2.imshow("Playback: Frame | Feature Grid", combined)
+        if video_writer is None:
+            fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+            video_writer = cv2.VideoWriter(
+                str(out_path), fourcc, fps, (combined.shape[1], combined.shape[0])
+            )
+
+        video_writer.write(combined)
         any_shown = True
 
-        key = cv2.waitKey(delay)
-        if key == ord("q"):
-            break
+    if video_writer is not None:
+        video_writer.release()
+        print(f"Video saved to {out_path}")
 
     if not any_shown:
-        print("No frames were displayed. Please check that feature maps exist and are processable.")
-        # Keep window open for user to see message
-        import time
-
-        time.sleep(3)
-    cv2.destroyAllWindows()
+        print("No frames were processed. Please check that feature maps exist and are processable.")
 
 
 if __name__ == "__main__":

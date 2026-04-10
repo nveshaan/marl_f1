@@ -1,4 +1,4 @@
-from .attn import SpatialSelectionAttention
+from .attn import CNNWithSelectionAttention, SpatialSelectionAttention
 from .ctde import CTDEFeaturesExtractor, CTDEFeaturesExtractorWithSelectionAttention
 from .maac import MAAC
 from .maddpg import MADDPG
@@ -11,4 +11,5 @@ __all__ = [
     "CTDEFeaturesExtractor",
     "CTDEFeaturesExtractorWithSelectionAttention",
     "SpatialSelectionAttention",
+    "CNNWithSelectionAttention",
 ]

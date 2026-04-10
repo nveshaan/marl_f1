@@ -1,0 +1,35 @@
+defaults:
+  - _self_
+  - agent: sb3
+  - algo: dqn
+  - policy: cnn
+  - task: single
+
+seed: 42
+project: marl_f1
+experiment_name: ${task.name}_${algo.name}_${policy.name}_seed${seed}
+timestamp:
+device: ${device:}
+num_threads: 8
+env_id: MultiCarRacing-v2
+env_kwargs:
+
+run_dir: ${hydra:runtime.output_dir}
+paths:
+  tb: tb
+  checkpoints: checkpoints
+  monitor_train: monitor_train
+  monitor_eval: monitor_eval
+  best_model: best_model
+  eval_logs: eval_logs
+  viz: viz
+
+hydra:
+  output_subdir: null
+  run:
+    dir: experiments/${experiment_name}_0
+  sweep:
+    dir: experiments/
+    subdir: ${experiment_name}_0
+  job:
+    chdir: false

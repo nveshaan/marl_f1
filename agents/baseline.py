@@ -165,7 +165,8 @@ class SingleAgent(BaseAgent):
             self._save_feature_maps(hook.features, fmap_dir, step)
 
             # Visualize
-            frame = vec_env.env_method("render")[0]
+            frames = vec_env.render()
+            frame = frames[0] if frames is not None and len(frames) > 0 else None
             if frame is not None:
                 cv2.imshow("env", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
                 cv2.waitKey(1)
@@ -276,7 +277,8 @@ class SingleAgent(BaseAgent):
 
     def _save_obs(self, vec_env, obs_dir, step):
         """Save observation frame as image."""
-        frame = vec_env.env_method("render")[0]
+        frames = vec_env.render()
+        frame = frames[0] if frames is not None and len(frames) > 0 else None
         if frame is not None:
             frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             cv2.imwrite(str(obs_dir / f"frame_{step:05d}.png"), frame_bgr)
@@ -323,3 +325,124 @@ class SingleAgent(BaseAgent):
 class MultiAgent(SingleAgent):
     def __init__(self, cfg):
         super().__init__(cfg)
+
+    def eval(self, num_steps=None, deterministic=True, selected_layers=None) -> None:
+        """Run evaluation with feature visualization for a specific agent.
+
+        Args:
+            num_steps: Maximum number of steps to run. If None, runs until episode ends.
+            deterministic: Whether to use deterministic policy.
+            selected_layers: List of layer names to hook. If None, user will be prompted.
+        """
+        # Create output directories
+        viz_dir = self.run_dir / "viz"
+        obs_dir = viz_dir / "frames"
+        fmap_dir = viz_dir / "feature_maps"
+        obs_dir.mkdir(parents=True, exist_ok=True)
+        fmap_dir.mkdir(parents=True, exist_ok=True)
+
+        # Load best model
+        best_model_path = self.run_dir / "best_model" / "best_model.zip"
+        if best_model_path.exists():
+            self.load(str(best_model_path))
+        else:
+            print(f"Warning: No best model found at {best_model_path}")
+
+        agent_input = input("\nSelect agent index to visualize (default 0): ").strip()
+        agent_index = int(agent_input) if agent_input.isdigit() else 0
+
+        # Get feature extractor
+        extractor = self._get_feature_extractor()
+
+        # Discover and prompt for layer selection if not provided
+        if selected_layers is None:
+            available_layers = self._discover_layers(extractor)
+            selected_layers = self._select_layers(available_layers)
+
+        # Setup hooks
+        hook = FeatureHook(extractor, self.policy_name, selected_layers)
+
+        # Run evaluation
+        vec_env = self.model.get_env()
+        obs = vec_env.reset()
+
+        step = 0
+        while True:
+            hook.clear()
+
+            action, _ = self.model.predict(obs, deterministic=deterministic)
+            obs, reward, done, info = vec_env.step(action)
+
+            self._save_multiagent_obs(vec_env, obs_dir, step, agent_index)
+            self._save_multiagent_feature_maps(hook.features, fmap_dir, step, agent_index)
+
+            # Visualize
+            frames = vec_env.render()
+            if frames is not None and len(frames) > 0:
+                frame = frames[agent_index] if len(frames) > agent_index else frames[0]
+            else:
+                frame = None
+
+            if frame is not None:
+                cv2.imshow("env", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+                cv2.waitKey(1)
+
+            step += 1
+
+            # Check stopping conditions
+            if num_steps is not None and step >= num_steps:
+                break
+            if isinstance(done, (list, tuple, np.ndarray)):
+                if any(done):
+                    break
+            elif done:
+                break
+
+        print(f"Done after {step} steps")
+        hook.remove()
+        cv2.destroyAllWindows()
+
+    def _save_multiagent_obs(self, vec_env, obs_dir, step, agent_index):
+        """Save observation frame for a specific agent as image."""
+        frames = vec_env.render()
+        if frames is not None and len(frames) > 0:
+            frame = frames[agent_index] if len(frames) > agent_index else frames[0]
+            if frame is not None:
+                frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                cv2.imwrite(str(obs_dir / f"frame_{step:05d}.png"), frame_bgr)
+
+    def _save_multiagent_feature_maps(self, feature_maps, fmap_dir, step, agent_index):
+        """Save feature maps for a specific agent as .npy and visualizations."""
+        for name, fmap in feature_maps.items():
+            # Extract only the specified agent's features
+            if fmap.shape[0] > agent_index:
+                fmap = fmap[agent_index : agent_index + 1].squeeze(0).cpu().numpy()
+            else:
+                fmap = fmap.squeeze(0).cpu().numpy()
+
+            np.save(str(fmap_dir / f"{name}_{step:05d}.npy"), fmap)
+
+            # Handle spatial 3D feature maps (C, H, W)
+            if fmap.ndim != 3:
+                continue
+
+            C = fmap.shape[0]
+            for c in range(min(8, C)):
+                fmap_img = fmap[c]
+
+                min_val, max_val = fmap_img.min(), fmap_img.max()
+                if max_val - min_val > 1e-8:
+                    fmap_img = (fmap_img - min_val) / (max_val - min_val)
+                else:
+                    fmap_img = np.zeros_like(fmap_img)
+
+                fmap_img = (fmap_img * 255).astype(np.uint8)
+
+                if fmap_img.ndim == 2:
+                    pass
+                elif fmap_img.ndim == 3 and fmap_img.shape[0] in (1, 3):
+                    fmap_img = np.transpose(fmap_img, (1, 2, 0))
+                else:
+                    fmap_img = np.asarray(fmap_img)
+
+                cv2.imwrite(str(fmap_dir / f"{name}_ch{c}_{step:05d}.png"), fmap_img)

@@ -10,6 +10,8 @@ def build_sb3_env(env_cfg, wrappers):
 
 def build_ss_env(env_cfg, wrappers):
     env_kwargs = env_cfg.pop("env_kwargs", {})
+    if env_kwargs is None:
+        env_kwargs = {}
     env = instantiate(env_cfg, **env_kwargs)
     for wrapper in wrappers:
         env = instantiate(wrapper, env)

@@ -9,6 +9,7 @@ marl_f1/
 │   ├── base_agent.py
 │   ├── baseline.py
 │   ├── common.py
+│   ├── control.py
 │   └── worldmodel.py
 ├── configs/
 │   └── train.yaml
@@ -22,7 +23,9 @@ marl_f1/
 ├── multi_car_racing/
 ├── scripts/
 │   ├── eval.py
+│   ├── optimal.py
 │   ├── playback.py
+│   ├── plots.py
 │   └── train.py
 ├── utils/
 │   └── hydra.py
