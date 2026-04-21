@@ -1,3 +1,0 @@
-name: cnn
-policy: CnnPolicy
-policy_kwargs: {}

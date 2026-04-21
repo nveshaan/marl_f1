@@ -6,24 +6,13 @@
 ```text
 marl_f1/
 ├── agents/
-│   ├── base_agent.py
-│   ├── baseline.py
-│   ├── common.py
-│   ├── control.py
-│   └── worldmodel.py
+│   └── base_agent.py
 ├── configs/
 │   └── train.yaml
 ├── models/
-│   ├── attn.py
-│   ├── ctde.py
-│   ├── maac.py
-│   ├── maddpg.py
-│   ├── mappo.py
-│   └── rssm.py
 ├── multi_car_racing/
 ├── scripts/
 │   ├── eval.py
-│   ├── optimal.py
 │   ├── playback.py
 │   ├── plots.py
 │   └── train.py
@@ -31,7 +20,6 @@ marl_f1/
 │   └── hydra.py
 ├── .gitignore
 ├── .gitmodules
-├── AUTHORS
 ├── LICENSE
 ├── main.py
 ├── pyproject.toml
@@ -40,8 +28,6 @@ marl_f1/
 <!-- END:PROJECT_TREE -->
 
 ## Setup
-
-> This project uses `uv` as the package/environment manager. Install it from [here](https://docs.astral.sh/uv/getting-started/installation/).
 
 ```bash
 git clone --recurse-submodules https://github.com/nveshaan/marl_f1.git
@@ -63,31 +49,18 @@ git pull
 uv sync
 ```
 
-To play with notebooks,
-
-```bash
-uv sync --group notebook
-```
-
 ## Training
 
 ```bash
-# for single-agent
-python -m scripts.train --multirun agent=sb3 algo=dqn,ppo,sac task=single policy=cnn,attn seed=42,43
-
-# for independent multi-agent
-python -m scripts.train --multirun agent=ss algo=iql,ippo task=competitive,cooperative policy=cnn,attn seed=42,43
-
-# for ctde multi-agent
-python -m scripts.train --multirun agent=ss algo=mappo,maddpg task=competitive,cooperative policy=ctde_cnn,ctde_attn seed=42,43
+python -m scripts.train
 ```
 
 | Argument | Description                                                           | Default  | Available values                                      |
 | -------- | --------------------------------------------------------------------- | -------- | ----------------------------------------------------- |
-| `task`   | Experiment tag/profile used in naming.                                | `single` | `competitive`, `cooperative`, `teams`                 |
-| `algo`   | RL algorithm config, including model settings and training timesteps. | `dqn`    | `dqn`, `sac`, `ppo`, `iql`, `ippo`, `mappo`, `maddpg` |
-| `policy` | Policy architecture/config used by the selected algorithm.            | `cnn`    | `cnn`, `attn`                                         |
-| `agent`  | Environment wrapper/vectorization backend.                            | `sb3`    | `ss`, `sb3`                                           |
+| `task`   | Experiment tag/profile used in naming.                                |  |                  |
+| `algo`   | RL algorithm config, including model settings and training timesteps. |    |  |
+| `policy` | Policy architecture/config used by the selected algorithm.            |     |                                          |
+| `agent`  | Environment wrapper/vectorization backend.                            |     |                                            |
 | `seed`   | Global random seed used for train and eval environments.              | `42`     | Any integer                                           |
 
 Hydra-style overrides are supported, so you can also set additional fields from `configs/train.yaml`.
